@@ -189,6 +189,21 @@ body {
   padding: 0.5rem 0;
 }
 
+.offers {
+  list-style: none;
+  margin: 0.35rem 0 0;
+  padding: 0;
+  font-size: 0.82rem;
+}
+
+.offers li {
+  padding: 0.1rem 0;
+}
+
+.offer-type {
+  color: var(--muted);
+}
+
 .shelf-head h1 {
   color: var(--green);
   margin-bottom: 0.25rem;
