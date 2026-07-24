@@ -102,7 +102,9 @@ body {
 
 .art {
   position: relative;
-  aspect-ratio: 1 / 1;
+  /* Yoto card covers are a fixed 250x396 portrait, with the title in the
+     lower third. Match that ratio so nothing is cropped. */
+  aspect-ratio: 250 / 396;
   border-radius: 0.6rem;
   overflow: hidden;
   background: #ece7dc;
