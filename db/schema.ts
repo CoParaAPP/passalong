@@ -13,6 +13,7 @@ import {
   uuid,
   text,
   timestamp,
+  date,
   unique,
 } from "drizzle-orm/pg-core";
 
@@ -100,3 +101,39 @@ export const wishlist = pgTable("wishlist", {
 }, (t) => [
   unique("wishlist_user_card_unique").on(t.userId, t.cardId),
 ]);
+
+// A request from one member to another to borrow or swap a card. Explicit app
+// state; accept/decline is the owner's, and both sides agree to the terms.
+export const proposals = pgTable("proposals", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  // Who is asking, and who owns the card.
+  fromUserId: uuid("from_user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  toUserId: uuid("to_user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  cardId: text("card_id")
+    .notNull()
+    .references(() => cards.id, { onDelete: "cascade" }),
+  // borrow | swap
+  type: text("type").notNull(),
+  // For a swap: the card the proposer offers in exchange.
+  offeredCardId: text("offered_card_id").references(() => cards.id, {
+    onDelete: "set null",
+  }),
+  // pending | accepted | declined | completed
+  status: text("status").notNull().default("pending"),
+  // Borrows only. Stored as a plain date (no time); read back as 'YYYY-MM-DD'.
+  returnBy: date("return_by", { mode: "string" }),
+  // Agreed at acceptance by the owner.
+  conditionNote: text("condition_note"),
+  // Which borrow/swap terms version both sides agreed to.
+  termsVersionAgreed: text("terms_version_agreed").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});

@@ -29,6 +29,7 @@ export default async function Matches() {
       cardId: schema.cards.id,
       title: schema.cards.title,
       cover: schema.cards.coverImageUrl,
+      ownerId: schema.users.id,
       username: schema.users.username,
       visibility: schema.ownership.visibility,
     })
@@ -53,7 +54,7 @@ export default async function Matches() {
       cardId: string;
       title: string;
       cover: string | null;
-      offers: { username: string; visibility: string }[];
+      offers: { ownerId: string; username: string; visibility: string }[];
     }
   >();
   for (const r of rows) {
@@ -64,6 +65,7 @@ export default async function Matches() {
       offers: [],
     };
     entry.offers.push({
+      ownerId: r.ownerId,
       username: r.username ?? "a neighbor",
       visibility: r.visibility,
     });
@@ -98,10 +100,20 @@ export default async function Matches() {
               <ul className="offers">
                 {m.offers.map((o, i) => (
                   <li key={i}>
-                    {o.username}{" "}
-                    <span className="offer-type">
-                      {OFFER_LABEL[o.visibility] ?? "offered"}
+                    <span>
+                      {o.username}{" "}
+                      <span className="offer-type">
+                        {OFFER_LABEL[o.visibility] ?? "offered"}
+                      </span>
                     </span>
+                    <a
+                      className="request"
+                      href={`/propose?to=${o.ownerId}&card=${m.cardId}&type=${
+                        o.visibility === "trade" ? "swap" : "borrow"
+                      }`}
+                    >
+                      {o.visibility === "trade" ? "Propose swap" : "Request"}
+                    </a>
                   </li>
                 ))}
               </ul>
