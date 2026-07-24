@@ -1,0 +1,59 @@
+/*
+ * Passalong: a private neighborhood group lends, borrows, and swaps Yoto cards.
+ * Copyright (C) 2026 Edward McWilliams and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+:root {
+  --ink: #22302a;
+  --paper: #faf7f0;
+  --green: #2f6b4f;
+  --muted: #6b7a72;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.landing {
+  max-width: 26rem;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+  text-align: center;
+}
+
+.landing h1 {
+  color: var(--green);
+  font-size: 2.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.connect {
+  margin-top: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--green);
+  color: #fff;
+  cursor: pointer;
+}
+
+.connect:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.fineprint {
+  margin-top: 2.5rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}

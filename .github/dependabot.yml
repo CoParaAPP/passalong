@@ -1,0 +1,9 @@
+# Dependency-vulnerability alerts and update PRs.
+# Activates once the repo is pushed to GitHub.
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
