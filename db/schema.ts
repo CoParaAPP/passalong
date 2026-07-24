@@ -13,7 +13,7 @@ import {
   uuid,
   text,
   timestamp,
-  boolean,
+  unique,
 } from "drizzle-orm/pg-core";
 
 // One member. Identity comes from Yoto OAuth, not a password.
@@ -56,4 +56,8 @@ export const ownership = pgTable("ownership", {
   firstSyncedAt: timestamp("first_synced_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-});
+}, (t) => [
+  // One ownership row per member per card. Lets a re-sync insert only genuinely
+  // new cards and never disturb the visibility a member already chose.
+  unique("ownership_user_card_unique").on(t.userId, t.cardId),
+]);

@@ -1,0 +1,1 @@
+ALTER TABLE "ownership" ADD CONSTRAINT "ownership_user_card_unique" UNIQUE("user_id","card_id");
