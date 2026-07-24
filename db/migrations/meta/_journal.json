@@ -29,6 +29,13 @@
       "when": 1784923418343,
       "tag": "0003_onboarding",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1784926617463,
+      "tag": "0004_wishlist",
+      "breakpoints": true
     }
   ]
 }

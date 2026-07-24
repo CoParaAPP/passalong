@@ -7,27 +7,15 @@
  * arrives unlisted; a bulk action offers the unlisted ones to the group.
  */
 
-import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
-import { getSessionUserId } from "@/lib/session";
+import { requireOnboardedUserId } from "@/lib/guards";
+import { Nav } from "../nav";
 
 export const dynamic = "force-dynamic";
 
 export default async function Shelf() {
-  const userId = await getSessionUserId();
-  if (!userId) redirect("/");
-
-  // Not finished onboarding yet: send them to pick a name and agree first.
-  const [member] = await db
-    .select({
-      username: schema.users.username,
-      covenantVersionAgreed: schema.users.covenantVersionAgreed,
-    })
-    .from(schema.users)
-    .where(eq(schema.users.id, userId))
-    .limit(1);
-  if (!member?.username || !member.covenantVersionAgreed) redirect("/welcome");
+  const userId = await requireOnboardedUserId();
 
   const cards = await db
     .select({
@@ -46,6 +34,7 @@ export default async function Shelf() {
 
   return (
     <main className="shelf">
+      <Nav active="shelf" />
       <header className="shelf-head">
         <h1>Your shelf</h1>
         <p>

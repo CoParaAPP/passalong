@@ -83,3 +83,20 @@ export const ownership = pgTable("ownership", {
   // new cards and never disturb the visibility a member already chose.
   unique("ownership_user_card_unique").on(t.userId, t.cardId),
 ]);
+
+// Cards a member wants. The picker is drawn from the catalog (the union of
+// everyone's synced cards), since there is no public Yoto catalog endpoint.
+export const wishlist = pgTable("wishlist", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  cardId: text("card_id")
+    .notNull()
+    .references(() => cards.id, { onDelete: "cascade" }),
+  addedAt: timestamp("added_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+}, (t) => [
+  unique("wishlist_user_card_unique").on(t.userId, t.cardId),
+]);
