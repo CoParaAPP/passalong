@@ -139,7 +139,30 @@ body {
 }
 
 .title {
-  margin: 0.5rem 0 0;
+  margin: 0.5rem 0 0.5rem;
   font-size: 0.85rem;
   line-height: 1.25;
+}
+
+.card-toggle {
+  margin-top: auto;
+}
+
+.toggle {
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.8rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  border: 1px solid var(--green);
+}
+
+.toggle.offer {
+  background: var(--green);
+  color: #fff;
+}
+
+.toggle.revoke {
+  background: transparent;
+  color: var(--green);
 }

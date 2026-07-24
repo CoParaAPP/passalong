@@ -31,42 +31,59 @@ export default async function Shelf() {
     .orderBy(schema.cards.title);
 
   const unlistedCount = cards.filter((c) => c.visibility === "unlisted").length;
+  const offeredCount = cards.length - unlistedCount;
 
   return (
     <main className="shelf">
       <header className="shelf-head">
         <h1>Your shelf</h1>
         <p>
-          {cards.length} card{cards.length === 1 ? "" : "s"} synced. Everything
-          starts private. Nothing is shared with the group until you offer it.
+          {cards.length} card{cards.length === 1 ? "" : "s"} synced
+          {offeredCount > 0 && ` · ${offeredCount} offered`}
+          {unlistedCount > 0 && ` · ${unlistedCount} private`}. Offer cards one at
+          a time below, or pull any back to private whenever you like.
         </p>
         {unlistedCount > 0 && (
           <form method="post" action="/shelf/offer">
             <button className="offer-all" type="submit">
-              Offer {unlistedCount} card{unlistedCount === 1 ? "" : "s"} to the
-              group
+              Offer all {unlistedCount} remaining to the group
             </button>
           </form>
         )}
       </header>
 
       <ul className="grid">
-        {cards.map((c) => (
-          <li key={c.cardId} className="cell">
-            <div className="art">
-              {c.cover ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={c.cover} alt={c.title} loading="lazy" />
-              ) : (
-                <div className="art-fallback" aria-hidden="true" />
-              )}
-              {c.visibility !== "unlisted" && (
-                <span className="badge">offered</span>
-              )}
-            </div>
-            <p className="title">{c.title}</p>
-          </li>
-        ))}
+        {cards.map((c) => {
+          const offered = c.visibility !== "unlisted";
+          return (
+            <li key={c.cardId} className="cell">
+              <div className="art">
+                {c.cover ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={c.cover} alt={c.title} loading="lazy" />
+                ) : (
+                  <div className="art-fallback" aria-hidden="true" />
+                )}
+                {offered && <span className="badge">offered</span>}
+              </div>
+              <p className="title">{c.title}</p>
+              <form method="post" action="/shelf/toggle" className="card-toggle">
+                <input type="hidden" name="cardId" value={c.cardId} />
+                <input
+                  type="hidden"
+                  name="action"
+                  value={offered ? "revoke" : "offer"}
+                />
+                <button
+                  type="submit"
+                  className={offered ? "toggle revoke" : "toggle offer"}
+                >
+                  {offered ? "Stop offering" : "Offer"}
+                </button>
+              </form>
+            </li>
+          );
+        })}
       </ul>
     </main>
   );
