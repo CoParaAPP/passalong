@@ -12,10 +12,9 @@ export default function Home() {
         Our neighborhood shelf for Yoto cards. Connect your Yoto account and
         your cards sync in. Nothing is shared until you choose to share it.
       </p>
-      {/* Wired up in the OAuth step; needs the registered client_id first. */}
-      <button className="connect" disabled>
+      <a className="connect" href="/auth/login">
         Connect your Yoto account
-      </button>
+      </a>
       <p className="fineprint">
         Unofficial, and not affiliated with Yoto. Personal Make Your Own
         recordings are never visible to this app.
