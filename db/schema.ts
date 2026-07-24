@@ -23,13 +23,35 @@ export const users = pgTable("users", {
   // Stable Yoto account identifier (the OAuth subject), used to recognise a
   // returning member. Not shown to anyone.
   yotoSub: text("yoto_sub").notNull().unique(),
-  username: text("username"),
+  // Chosen display name. No real name required. Unique across the group.
+  username: text("username").unique(),
+  // Which covenant version the member agreed to, and when. Null until they
+  // complete onboarding.
+  covenantVersionAgreed: text("covenant_version_agreed"),
+  covenantAgreedAt: timestamp("covenant_agreed_at", { withTimezone: true }),
   // AES-256-GCM ciphertext of the Yoto refresh token. Decrypted only in server
   // memory at refresh time. Never logged, never sent to the client.
   refreshTokenEncrypted: text("refresh_token_encrypted"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
+});
+
+// Invite-only gate. An organizer mints a code; a brand-new Yoto login can only
+// create an account by presenting an unused one. Existing members never need it.
+export const invites = pgTable("invites", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  code: text("code").notNull().unique(),
+  // Optional reminder of who the code was made for. Not shown to members.
+  note: text("note"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  // Set atomically when the code is claimed, so a code works exactly once.
+  usedByUserId: uuid("used_by_user_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  usedAt: timestamp("used_at", { withTimezone: true }),
 });
 
 // The commercial-card catalog, seeded from what members sync. Public catalog
