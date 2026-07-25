@@ -29,6 +29,6 @@
     "@types/react-dom": "^19.2.3",
     "@types/web-push": "^3.6.4",
     "drizzle-kit": "^0.31.10",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   }
 }
