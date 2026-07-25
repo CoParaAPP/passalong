@@ -474,6 +474,21 @@ body {
   border-radius: 999px;
 }
 
+.badge.limits {
+  background: #8a6d3b;
+}
+
+.card-toggle.two {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.toggle.limits {
+  background: #f0ead9;
+  color: #6b5a2e;
+  border-color: #e0d4b0;
+}
+
 .badge.loan {
   background: #9a6b2f;
 }

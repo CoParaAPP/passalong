@@ -86,7 +86,12 @@ export default async function Shelf({
 
   const available = owned.filter((c) => c.status === "available");
   const unlistedCount = available.filter((c) => c.visibility === "unlisted").length;
-  const offeredCount = available.length - unlistedCount;
+  const offeredCount = available.filter(
+    (c) => c.visibility === "lend" || c.visibility === "trade"
+  ).length;
+  const offLimitsCount = available.filter(
+    (c) => c.visibility === "off_limits"
+  ).length;
 
   return (
     <main className="shelf">
@@ -117,8 +122,10 @@ export default async function Shelf({
         <p>
           {owned.length} card{owned.length === 1 ? "" : "s"}
           {offeredCount > 0 && ` · ${offeredCount} offered`}
-          {unlistedCount > 0 && ` · ${unlistedCount} private`}. Offer cards one at
-          a time below, or pull any back to private whenever you like.
+          {unlistedCount > 0 && ` · ${unlistedCount} private`}
+          {offLimitsCount > 0 && ` · ${offLimitsCount} off-limits`}. Offer a card,
+          keep it private, or mark it off-limits so it&apos;s shown but never
+          asked for.
         </p>
         {returned && (
           <p className="reminder">
@@ -138,7 +145,8 @@ export default async function Shelf({
       <ul className="grid">
         {owned.map((c) => {
           const onLoan = c.status === "on_loan";
-          const offered = c.visibility !== "unlisted";
+          const offered = c.visibility === "lend" || c.visibility === "trade";
+          const offLimits = c.visibility === "off_limits";
           return (
             <li key={c.cardId} className="cell">
               <div className="art">
@@ -150,8 +158,10 @@ export default async function Shelf({
                 )}
                 {onLoan ? (
                   <span className="badge loan">on loan</span>
+                ) : offered ? (
+                  <span className="badge">offered</span>
                 ) : (
-                  offered && <span className="badge">offered</span>
+                  offLimits && <span className="badge limits">off-limits</span>
                 )}
               </div>
               <p className="title">{c.title}</p>
@@ -168,21 +178,39 @@ export default async function Shelf({
                     </button>
                   </form>
                 </div>
-              ) : (
+              ) : offered ? (
                 <form method="post" action="/shelf/toggle" className="card-toggle">
                   <input type="hidden" name="cardId" value={c.cardId} />
-                  <input
-                    type="hidden"
-                    name="action"
-                    value={offered ? "revoke" : "offer"}
-                  />
-                  <button
-                    type="submit"
-                    className={offered ? "toggle revoke" : "toggle offer"}
-                  >
-                    {offered ? "Stop offering" : "Offer"}
+                  <input type="hidden" name="to" value="unlisted" />
+                  <button type="submit" className="toggle revoke">
+                    Stop offering
                   </button>
                 </form>
+              ) : offLimits ? (
+                <form method="post" action="/shelf/toggle" className="card-toggle">
+                  <input type="hidden" name="cardId" value={c.cardId} />
+                  <input type="hidden" name="to" value="unlisted" />
+                  <button type="submit" className="toggle offer">
+                    Make available
+                  </button>
+                </form>
+              ) : (
+                <div className="card-toggle two">
+                  <form method="post" action="/shelf/toggle">
+                    <input type="hidden" name="cardId" value={c.cardId} />
+                    <input type="hidden" name="to" value="lend" />
+                    <button type="submit" className="toggle offer">
+                      Offer
+                    </button>
+                  </form>
+                  <form method="post" action="/shelf/toggle">
+                    <input type="hidden" name="cardId" value={c.cardId} />
+                    <input type="hidden" name="to" value="off_limits" />
+                    <button type="submit" className="toggle limits">
+                      Off-limits
+                    </button>
+                  </form>
+                </div>
               )}
             </li>
           );
