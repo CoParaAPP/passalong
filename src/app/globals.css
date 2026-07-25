@@ -5,10 +5,20 @@
  */
 
 :root {
-  --ink: #22302a;
+  --ink: #2a2622;
   --paper: #faf7f0;
-  --green: #2f6b4f;
-  --muted: #6b7a72;
+  /* Yoto flamingo. One brand hue, three roles tuned for WCAG AA contrast:
+     - --accent (#f45436): brand flamingo. Theme color, large headings,
+       decorative fills. White text on it is only 3.4:1, so it is never a
+       small-text background.
+     - --accent-deep (#d33f22): interactive backgrounds (buttons, badges) with
+       white text — 4.7:1, passes AA.
+     - --accent-ink (#c0381e): accent text on the light paper — 5.1:1, passes AA. */
+  --accent: #f45436;
+  --accent-deep: #d33f22;
+  --accent-ink: #c0381e;
+  --on-accent: #ffffff;
+  --muted: #78706a;
 }
 
 * {
@@ -31,7 +41,7 @@ body {
 }
 
 .landing h1 {
-  color: var(--green);
+  color: var(--accent-ink);
   font-size: 2.25rem;
   margin-bottom: 0.5rem;
 }
@@ -42,7 +52,7 @@ body {
   font-size: 1rem;
   border: none;
   border-radius: 0.5rem;
-  background: var(--green);
+  background: var(--accent-deep);
   color: #fff;
   cursor: pointer;
 }
@@ -66,7 +76,7 @@ body {
 }
 
 .onboard h1 {
-  color: var(--green);
+  color: var(--accent-ink);
   margin-bottom: 0.5rem;
 }
 
@@ -86,7 +96,7 @@ body {
 .stack input:not([type]) {
   padding: 0.6rem 0.7rem;
   font-size: 1rem;
-  border: 1px solid #cdd5cf;
+  border: 1px solid #d8d1c9;
   border-radius: 0.45rem;
   background: #fff;
 }
@@ -97,7 +107,7 @@ body {
   font-size: 1rem;
   border: none;
   border-radius: 0.5rem;
-  background: var(--green);
+  background: var(--accent-deep);
   color: #fff;
   cursor: pointer;
 }
@@ -122,7 +132,7 @@ body {
 .covenant h2 {
   margin: 0 0 0.5rem;
   font-size: 1.1rem;
-  color: var(--green);
+  color: var(--accent-ink);
 }
 
 .covenant dl {
@@ -136,7 +146,7 @@ body {
 
 .covenant dd {
   margin: 0.15rem 0 0;
-  color: #3f4a44;
+  color: #4a443f;
   font-size: 0.92rem;
 }
 
@@ -171,7 +181,7 @@ body {
 }
 
 .nav a.on {
-  color: var(--green);
+  color: var(--accent-ink);
 }
 
 .shelf-head.section {
@@ -179,7 +189,7 @@ body {
 }
 
 .shelf-head.section h2 {
-  color: var(--green);
+  color: var(--accent-ink);
   margin-bottom: 0.25rem;
 }
 
@@ -229,8 +239,8 @@ body {
 
 .msg.mine {
   align-self: flex-end;
-  background: #e8f0ea;
-  border-color: #cfe0d5;
+  background: #fdece7;
+  border-color: #f6cdc2;
 }
 
 .msg-body {
@@ -255,7 +265,7 @@ body {
   flex: 1;
   padding: 0.55rem 0.7rem;
   font: inherit;
-  border: 1px solid #cdd5cf;
+  border: 1px solid #d8d1c9;
   border-radius: 0.5rem;
   resize: vertical;
 }
@@ -279,8 +289,8 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  background: #eef4ee;
-  border: 1px solid #cfe0d5;
+  background: #f4f1ea;
+  border: 1px solid #e0dccf;
   border-radius: 0.5rem;
   padding: 0.6rem 0.8rem;
   font-size: 0.9rem;
@@ -326,7 +336,7 @@ body {
   font-size: 0.75rem;
   text-decoration: none;
   color: #fff;
-  background: var(--green);
+  background: var(--accent-deep);
   padding: 0.2rem 0.5rem;
   border-radius: 0.35rem;
 }
@@ -369,7 +379,7 @@ body {
 
 .accept-form input[type="text"] {
   padding: 0.5rem 0.6rem;
-  border: 1px solid #cdd5cf;
+  border: 1px solid #d8d1c9;
   border-radius: 0.4rem;
   font-size: 0.9rem;
 }
@@ -388,7 +398,7 @@ body {
 }
 
 .status-accepted {
-  color: var(--green);
+  color: var(--accent-ink);
 }
 
 .status-declined {
@@ -400,7 +410,7 @@ body {
 }
 
 .shelf-head h1 {
-  color: var(--green);
+  color: var(--accent-ink);
   margin-bottom: 0.25rem;
 }
 
@@ -415,7 +425,7 @@ body {
   font-size: 0.95rem;
   border: none;
   border-radius: 0.5rem;
-  background: var(--green);
+  background: var(--accent-deep);
   color: #fff;
   cursor: pointer;
 }
@@ -467,7 +477,7 @@ body {
   position: absolute;
   top: 0.4rem;
   right: 0.4rem;
-  background: var(--green);
+  background: var(--accent-deep);
   color: #fff;
   font-size: 0.7rem;
   padding: 0.15rem 0.45rem;
@@ -500,9 +510,9 @@ body {
 }
 
 .reminder {
-  background: #eef4ee;
-  border: 1px solid #c7dcc9;
-  color: #2f5b3f;
+  background: #f4f1ea;
+  border: 1px solid #e0dccf;
+  color: var(--ink);
   padding: 0.6rem 0.8rem;
   border-radius: 0.5rem;
   font-size: 0.9rem;
@@ -524,15 +534,15 @@ body {
   font-size: 0.8rem;
   border-radius: 0.4rem;
   cursor: pointer;
-  border: 1px solid var(--green);
+  border: 1px solid var(--accent-deep);
 }
 
 .toggle.offer {
-  background: var(--green);
+  background: var(--accent-deep);
   color: #fff;
 }
 
 .toggle.revoke {
   background: transparent;
-  color: var(--green);
+  color: var(--accent-ink);
 }
