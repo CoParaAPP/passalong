@@ -13,14 +13,36 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import { invites } from "../db/schema.ts";
 
-// Unambiguous alphabet: no 0/O/1/I/L to keep spoken codes reliable.
-const ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+// Friendly, wholesome word pairs — easy to say out loud and share, and they
+// suit a neighborhood group better than a random string. e.g. "cozy-otter".
+const ADJECTIVES = [
+  "cozy", "sunny", "happy", "kind", "merry", "snug", "jolly", "breezy",
+  "cheery", "gentle", "bright", "lucky", "mellow", "plucky", "comfy", "sweet",
+  "chirpy", "dandy", "peppy", "rosy", "toasty", "sprightly", "wholesome", "chipper",
+];
+const NOUNS = [
+  "otter", "maple", "acorn", "fox", "robin", "clover", "pebble", "willow",
+  "sparrow", "cocoa", "mitten", "lantern", "meadow", "biscuit", "hedgehog",
+  "badger", "walnut", "poppy", "pinecone", "bumble", "sprout", "puddle",
+  "marigold", "chestnut",
+];
 
-function makeCode(length = 8): string {
-  const bytes = randomBytes(length);
-  let out = "";
-  for (let i = 0; i < length; i++) out += ALPHABET[bytes[i] % ALPHABET.length];
-  return out;
+function pick(list: string[]): string {
+  return list[randomBytes(1)[0] % list.length];
+}
+
+function makeCode(): string {
+  return `${pick(ADJECTIVES)}-${pick(NOUNS)}`;
+}
+
+// The pg unique-violation code can sit on the driver error or its cause.
+function isUniqueViolation(err: unknown): boolean {
+  let cur: unknown = err;
+  for (let i = 0; cur && i < 5; i++) {
+    if (typeof cur === "object" && "code" in cur && cur.code === "23505") return true;
+    cur = (cur as { cause?: unknown }).cause;
+  }
+  return false;
 }
 
 async function main() {
@@ -32,8 +54,20 @@ async function main() {
 
   const pool = new Pool({ connectionString });
   const db = drizzle(pool);
-  const code = makeCode();
-  await db.insert(invites).values({ code, note });
+
+  // Word pairs can collide; retry on a taken code until we land a free one.
+  let code = "";
+  for (let attempt = 0; attempt < 25; attempt++) {
+    code = makeCode();
+    try {
+      await db.insert(invites).values({ code, note });
+      break;
+    } catch (err) {
+      if (isUniqueViolation(err) && attempt < 24) continue;
+      await pool.end();
+      throw err;
+    }
+  }
   await pool.end();
 
   console.log(`\nInvite code: ${code}`);
