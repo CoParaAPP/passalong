@@ -631,16 +631,31 @@ a {
   border-color: var(--border);
 }
 
+/* Off-limits is a quiet, rare choice, not a co-primary button. */
 .toggle.limits {
-  background: #f0ead9;
-  color: #6b5a2e;
-  border-color: #e0d4b0;
+  flex: 0 0 auto;
+  background: transparent;
+  border-color: transparent;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.74rem;
+  padding: 0.4rem 0.45rem;
+  text-decoration: underline;
+  box-shadow: none;
 }
 
-.card-toggle.two .toggle,
 .accept-form .toggle,
 .proposal-actions .toggle {
   width: auto;
+  flex: 1;
+}
+
+.card-toggle.two .toggle {
+  width: auto;
+}
+
+/* Offer stays the main pill; off-limits sits quietly beside it. */
+.card-toggle.two .toggle.offer {
   flex: 1;
 }
 
