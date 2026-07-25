@@ -19,9 +19,13 @@ if (!connectionString) {
   throw new Error("DATABASE_URL is not set. See .env.example.");
 }
 
-// A single pool per server process. Managed Postgres hosts (incl. Supabase)
-// take a plain connection string; TLS is negotiated from the URL.
-const pool = new Pool({ connectionString });
+// One pool, reused across dev hot-reloads and warm serverless invocations, so
+// connections never leak. On Vercel, point DATABASE_URL at Supabase's pooled
+// connection (port 6543) so many short-lived functions share upstream
+// connections; TLS is negotiated from the URL.
+const globalForDb = globalThis as unknown as { pool?: Pool };
+const pool = globalForDb.pool ?? new Pool({ connectionString, max: 5 });
+if (!globalForDb.pool) globalForDb.pool = pool;
 
 export const db = drizzle(pool, { schema });
 export { schema };
