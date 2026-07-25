@@ -8,8 +8,8 @@
  * roll the cache when the shell changes.
  */
 
-const CACHE_VERSION = "passalong-shell-v2";
-const SHELL_URLS = ["/", "/manifest.webmanifest", "/icon.svg"];
+const CACHE_VERSION = "passalong-shell-v3";
+const SHELL_URLS = ["/", "/manifest.webmanifest", "/icon-192.png"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -71,8 +71,8 @@ self.addEventListener("push", (event) => {
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
-      icon: "/icon.svg",
-      badge: "/icon.svg",
+      icon: "/icon-192.png",
+      badge: "/icon-192.png",
       data: { url: data.url || "/shelf" },
     })
   );
