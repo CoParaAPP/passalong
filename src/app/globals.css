@@ -264,6 +264,43 @@ body {
   margin-top: 0;
 }
 
+/* Reminder banners */
+.reminders {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.reminders .reminder {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: #eef4ee;
+  border: 1px solid #cfe0d5;
+  border-radius: 0.5rem;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.9rem;
+}
+
+.reminders .reminder.overdue {
+  background: #fbeeea;
+  border-color: #e6c3b8;
+}
+
+.dismiss {
+  flex: none;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.82rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 .request {
   flex: none;
   font-size: 0.75rem;

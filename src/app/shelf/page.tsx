@@ -8,7 +8,7 @@
  * arrives unlisted; sharing is an explicit opt-in.
  */
 
-import { aliasedTable, and, eq } from "drizzle-orm";
+import { aliasedTable, and, desc, eq, isNull } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { requireOnboardedUserId } from "@/lib/guards";
 import { Nav } from "../nav";
@@ -22,6 +22,22 @@ export default async function Shelf({
 }) {
   const userId = await requireOnboardedUserId();
   const { returned } = await searchParams;
+
+  // Unread reminders from the scheduled return-reminder job.
+  const reminders = await db
+    .select({
+      id: schema.notifications.id,
+      body: schema.notifications.body,
+      kind: schema.notifications.kind,
+    })
+    .from(schema.notifications)
+    .where(
+      and(
+        eq(schema.notifications.userId, userId),
+        isNull(schema.notifications.readAt)
+      )
+    )
+    .orderBy(desc(schema.notifications.createdAt));
 
   const borrower = aliasedTable(schema.users, "borrower");
   const lender = aliasedTable(schema.users, "lender");
@@ -73,6 +89,26 @@ export default async function Shelf({
   return (
     <main className="shelf">
       <Nav active="shelf" />
+      {reminders.length > 0 && (
+        <ul className="reminders">
+          {reminders.map((n) => (
+            <li
+              key={n.id}
+              className={
+                n.kind === "return_overdue" ? "reminder overdue" : "reminder"
+              }
+            >
+              <span>{n.body}</span>
+              <form method="post" action="/notifications/dismiss">
+                <input type="hidden" name="id" value={n.id} />
+                <button type="submit" className="dismiss">
+                  Dismiss
+                </button>
+              </form>
+            </li>
+          ))}
+        </ul>
+      )}
       <header className="shelf-head">
         <h1>Your shelf</h1>
         <p>
