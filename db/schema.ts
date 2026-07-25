@@ -74,8 +74,12 @@ export const ownership = pgTable("ownership", {
   cardId: text("card_id")
     .notNull()
     .references(() => cards.id, { onDelete: "cascade" }),
-  // unlisted (default) | lend | trade. Off-limits and loan states arrive later.
+  // unlisted (default) | lend | trade. Off-limits arrives later.
   visibility: text("visibility").notNull().default("unlisted"),
+  // available | on_loan. Explicit app state, never inferred from a Yoto sync.
+  status: text("status").notNull().default("available"),
+  // The active loan when status is on_loan. Soft link to loans.id.
+  currentLoanId: uuid("current_loan_id"),
   firstSyncedAt: timestamp("first_synced_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -136,4 +140,32 @@ export const proposals = pgTable("proposals", {
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
+});
+
+// A loan is explicit app state created when an owner accepts a borrow. It
+// explains why Yoto will show the card in the borrower's library and gone from
+// the lender's; the app ignores that mismatch because this record accounts for
+// it. Ownership is never reassigned by a sync.
+export const loans = pgTable("loans", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  // The lender's ownership row this loan is against. Soft-null if that row goes.
+  ownershipId: uuid("ownership_id").references(() => ownership.id, {
+    onDelete: "set null",
+  }),
+  lenderId: uuid("lender_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  borrowerId: uuid("borrower_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  cardId: text("card_id")
+    .notNull()
+    .references(() => cards.id, { onDelete: "cascade" }),
+  dueBy: date("due_by", { mode: "string" }),
+  // active | returned
+  status: text("status").notNull().default("active"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  returnedAt: timestamp("returned_at", { withTimezone: true }),
 });

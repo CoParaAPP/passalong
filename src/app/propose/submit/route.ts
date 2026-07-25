@@ -46,6 +46,7 @@ export async function POST(request: Request) {
       and(
         eq(schema.ownership.userId, toUserId),
         eq(schema.ownership.cardId, cardId),
+        eq(schema.ownership.status, "available"),
         inArray(schema.ownership.visibility, ["lend", "trade"])
       )
     )
@@ -71,6 +72,7 @@ export async function POST(request: Request) {
         and(
           eq(schema.ownership.userId, me),
           eq(schema.ownership.cardId, offeredCardId),
+          eq(schema.ownership.status, "available"),
           inArray(schema.ownership.visibility, ["lend", "trade"])
         )
       )

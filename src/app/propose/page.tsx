@@ -64,6 +64,7 @@ export default async function Propose({
       and(
         eq(schema.ownership.userId, to!),
         eq(schema.ownership.cardId, card!),
+        eq(schema.ownership.status, "available"),
         inArray(schema.ownership.visibility, ["lend", "trade"])
       )
     )
@@ -82,6 +83,7 @@ export default async function Propose({
             and(
               eq(schema.ownership.userId, me),
               ne(schema.ownership.cardId, card!),
+              eq(schema.ownership.status, "available"),
               inArray(schema.ownership.visibility, ["lend", "trade"])
             )
           )

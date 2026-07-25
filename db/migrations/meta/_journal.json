@@ -43,6 +43,13 @@
       "when": 1784936687459,
       "tag": "0005_proposals",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1784940097765,
+      "tag": "0006_loans",
+      "breakpoints": true
     }
   ]
 }

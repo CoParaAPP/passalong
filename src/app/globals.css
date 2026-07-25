@@ -361,6 +361,25 @@ body {
   border-radius: 999px;
 }
 
+.badge.loan {
+  background: #9a6b2f;
+}
+
+.loan-note {
+  margin: 0 0 0.4rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.reminder {
+  background: #eef4ee;
+  border: 1px solid #c7dcc9;
+  color: #2f5b3f;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+}
+
 .title {
   margin: 0.5rem 0 0.5rem;
   font-size: 0.85rem;

@@ -39,6 +39,7 @@ export default async function Matches() {
       and(
         eq(schema.ownership.cardId, schema.wishlist.cardId),
         ne(schema.ownership.userId, userId),
+        eq(schema.ownership.status, "available"),
         inArray(schema.ownership.visibility, ["lend", "trade"])
       )
     )

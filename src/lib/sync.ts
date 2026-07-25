@@ -11,7 +11,7 @@
  */
 
 import "server-only";
-import { sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { db, schema } from "./db";
 
 export interface CommercialCard {
@@ -65,7 +65,20 @@ export async function syncLibrary(
   const commercial = filterCommercialCards(raw);
   if (commercial.length === 0) return { synced: 0 };
 
+  // Cards this member is currently borrowing show up in their Yoto library, but
+  // they are not theirs. Never create ownership for a borrowed card. Ownership
+  // is pinned in this app; a sync only ever proposes genuinely new cards.
+  const borrowing = await db
+    .select({ cardId: schema.loans.cardId })
+    .from(schema.loans)
+    .where(
+      and(eq(schema.loans.borrowerId, userId), eq(schema.loans.status, "active"))
+    );
+  const borrowedIds = new Set(borrowing.map((b) => b.cardId));
+  const toOwn = commercial.filter((c) => !borrowedIds.has(c.cardId));
+
   await db.transaction(async (tx) => {
+    // The catalog is shared public data; refresh every commercial card.
     await tx
       .insert(schema.cards)
       .values(
@@ -83,11 +96,16 @@ export async function syncLibrary(
         },
       });
 
-    await tx
-      .insert(schema.ownership)
-      .values(commercial.map((c) => ({ userId, cardId: c.cardId })))
-      .onConflictDoNothing();
+    // Ownership only for cards the member isn't borrowing. Existing rows are
+    // left untouched, so a lent-out card (absent from this sync) keeps its
+    // pinned ownership and on_loan status.
+    if (toOwn.length > 0) {
+      await tx
+        .insert(schema.ownership)
+        .values(toOwn.map((c) => ({ userId, cardId: c.cardId })))
+        .onConflictDoNothing();
+    }
   });
 
-  return { synced: commercial.length };
+  return { synced: toOwn.length };
 }
