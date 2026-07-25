@@ -4,9 +4,21 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-type Tab = "shelf" | "wishlist" | "matches" | "proposals";
+type Tab =
+  | "shelf"
+  | "wishlist"
+  | "matches"
+  | "proposals"
+  | "report"
+  | "organizer";
 
-export function Nav({ active }: { active: Tab }) {
+export function Nav({
+  active,
+  isOrganizer = false,
+}: {
+  active: Tab;
+  isOrganizer?: boolean;
+}) {
   return (
     <nav className="nav">
       <a className={active === "shelf" ? "on" : ""} href="/shelf">
@@ -21,6 +33,14 @@ export function Nav({ active }: { active: Tab }) {
       <a className={active === "proposals" ? "on" : ""} href="/proposals">
         Proposals
       </a>
+      <a className={active === "report" ? "on" : ""} href="/flag">
+        Report
+      </a>
+      {isOrganizer && (
+        <a className={active === "organizer" ? "on" : ""} href="/organizer">
+          Organizer
+        </a>
+      )}
     </nav>
   );
 }

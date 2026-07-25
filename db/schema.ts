@@ -14,6 +14,7 @@ import {
   text,
   timestamp,
   date,
+  boolean,
   unique,
 } from "drizzle-orm/pg-core";
 
@@ -30,6 +31,8 @@ export const users = pgTable("users", {
   // complete onboarding.
   covenantVersionAgreed: text("covenant_version_agreed"),
   covenantAgreedAt: timestamp("covenant_agreed_at", { withTimezone: true }),
+  // Organizers can see and resolve flags. Set with `npm run organizer:add`.
+  isOrganizer: boolean("is_organizer").notNull().default(false),
   // AES-256-GCM ciphertext of the Yoto refresh token. Decrypted only in server
   // memory at refresh time. Never logged, never sent to the client.
   refreshTokenEncrypted: text("refresh_token_encrypted"),
@@ -221,4 +224,30 @@ export const pushSubscriptions = pgTable("push_subscriptions", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
+});
+
+// A member's flag to the organizer: anything that needs a human. Can carry an
+// optional proposal for context. Organizers triage and resolve.
+export const flags = pgTable("flags", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  reporterId: uuid("reporter_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  // Optional proposal this is about.
+  proposalId: uuid("proposal_id").references(() => proposals.id, {
+    onDelete: "set null",
+  }),
+  // Optional free-text context (a title, a name, a date).
+  context: text("context"),
+  body: text("body").notNull(),
+  // open | resolved
+  status: text("status").notNull().default("open"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  resolvedAt: timestamp("resolved_at", { withTimezone: true }),
+  resolvedById: uuid("resolved_by_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  resolutionNote: text("resolution_note"),
 });

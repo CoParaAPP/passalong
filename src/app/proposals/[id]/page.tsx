@@ -125,7 +125,8 @@ export default async function Thread({
 
       <p className="fineprint">
         Keep it in here. No need to share phone numbers or addresses.{" "}
-        <a href="/proposals">Back to proposals</a>
+        <a href="/proposals">Back to proposals</a> ·{" "}
+        <a href={`/flag?proposal=${proposal.id}`}>Flag to organizer</a>
       </p>
     </main>
   );

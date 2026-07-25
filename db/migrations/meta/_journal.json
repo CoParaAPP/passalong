@@ -71,6 +71,13 @@
       "when": 1784988999156,
       "tag": "0009_push_subscriptions",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1784989789416,
+      "tag": "0010_flags",
+      "breakpoints": true
     }
   ]
 }

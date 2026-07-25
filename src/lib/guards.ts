@@ -30,3 +30,27 @@ export async function requireOnboardedUserId(): Promise<string> {
   if (!member?.username || !member.covenantVersionAgreed) redirect("/welcome");
   return userId;
 }
+
+/** True if the signed-in member is an organizer. Cheap check for nav/links. */
+export async function viewerIsOrganizer(): Promise<boolean> {
+  const userId = await getSessionUserId();
+  if (!userId) return false;
+  const [member] = await db
+    .select({ isOrganizer: schema.users.isOrganizer })
+    .from(schema.users)
+    .where(eq(schema.users.id, userId))
+    .limit(1);
+  return Boolean(member?.isOrganizer);
+}
+
+/** Returns the organizer's id, or redirects away if the viewer isn't one. */
+export async function requireOrganizer(): Promise<string> {
+  const userId = await requireOnboardedUserId();
+  const [member] = await db
+    .select({ isOrganizer: schema.users.isOrganizer })
+    .from(schema.users)
+    .where(eq(schema.users.id, userId))
+    .limit(1);
+  if (!member?.isOrganizer) redirect("/shelf");
+  return userId;
+}

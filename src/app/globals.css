@@ -301,6 +301,12 @@ body {
   text-decoration: underline;
 }
 
+.flag-body {
+  margin: 0.35rem 0 0.5rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 .push-note {
   display: flex;
   align-items: center;

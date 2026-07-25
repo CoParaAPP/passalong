@@ -10,7 +10,8 @@
     "start": "next start",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node --experimental-strip-types db/migrate.ts",
-    "invite:new": "node --experimental-strip-types scripts/new-invite.ts"
+    "invite:new": "node --experimental-strip-types scripts/new-invite.ts",
+    "organizer:add": "node --experimental-strip-types scripts/add-organizer.ts"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.2",

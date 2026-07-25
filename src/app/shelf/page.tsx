@@ -10,7 +10,7 @@
 
 import { aliasedTable, and, desc, eq, isNull } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
-import { requireOnboardedUserId } from "@/lib/guards";
+import { requireOnboardedUserId, viewerIsOrganizer } from "@/lib/guards";
 import { Nav } from "../nav";
 import { EnablePush } from "../enable-push";
 
@@ -23,6 +23,7 @@ export default async function Shelf({
 }) {
   const userId = await requireOnboardedUserId();
   const { returned } = await searchParams;
+  const isOrganizer = await viewerIsOrganizer();
 
   // Unread reminders from the scheduled return-reminder job.
   const reminders = await db
@@ -89,7 +90,7 @@ export default async function Shelf({
 
   return (
     <main className="shelf">
-      <Nav active="shelf" />
+      <Nav active="shelf" isOrganizer={isOrganizer} />
       <EnablePush />
       {reminders.length > 0 && (
         <ul className="reminders">
