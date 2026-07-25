@@ -50,6 +50,13 @@
       "when": 1784940097765,
       "tag": "0006_loans",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1784986640389,
+      "tag": "0007_messages",
+      "breakpoints": true
     }
   ]
 }

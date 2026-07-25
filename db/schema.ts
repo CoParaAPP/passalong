@@ -169,3 +169,19 @@ export const loans = pgTable("loans", {
     .defaultNow(),
   returnedAt: timestamp("returned_at", { withTimezone: true }),
 });
+
+// A thin message thread tied to one proposal, so the two people can coordinate a
+// handoff inside the app. No contact details are ever exchanged.
+export const messages = pgTable("messages", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  proposalId: uuid("proposal_id")
+    .notNull()
+    .references(() => proposals.id, { onDelete: "cascade" }),
+  fromUserId: uuid("from_user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  body: text("body").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});

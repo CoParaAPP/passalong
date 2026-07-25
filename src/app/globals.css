@@ -208,6 +208,62 @@ body {
   color: var(--muted);
 }
 
+/* Message thread */
+.thread {
+  list-style: none;
+  margin: 1.25rem 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.msg {
+  max-width: 80%;
+  align-self: flex-start;
+  background: #fff;
+  border: 1px solid #e0dccf;
+  border-radius: 0.7rem;
+  padding: 0.55rem 0.75rem;
+}
+
+.msg.mine {
+  align-self: flex-end;
+  background: #e8f0ea;
+  border-color: #cfe0d5;
+}
+
+.msg-body {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.msg-meta {
+  margin: 0.25rem 0 0;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.msg-form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.msg-form textarea {
+  flex: 1;
+  padding: 0.55rem 0.7rem;
+  font: inherit;
+  border: 1px solid #cdd5cf;
+  border-radius: 0.5rem;
+  resize: vertical;
+}
+
+.msg-form .primary {
+  margin-top: 0;
+}
+
 .request {
   flex: none;
   font-size: 0.75rem;

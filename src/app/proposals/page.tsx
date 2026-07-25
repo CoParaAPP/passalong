@@ -129,6 +129,9 @@ export default async function Proposals() {
                     : ""}
                 </p>
               )}
+              <p className="proposal-line">
+                <a href={`/proposals/${p.id}`}>Messages</a>
+              </p>
             </li>
           ))}
         </ul>
@@ -156,6 +159,9 @@ export default async function Proposals() {
                 {p.status === "accepted" && p.conditionNote
                   ? ` — "${p.conditionNote}"`
                   : ""}
+              </p>
+              <p className="proposal-line">
+                <a href={`/proposals/${p.id}`}>Messages</a>
               </p>
             </li>
           ))}
