@@ -8,7 +8,7 @@
  * roll the cache when the shell changes.
  */
 
-const CACHE_VERSION = "passalong-shell-v1";
+const CACHE_VERSION = "passalong-shell-v2";
 const SHELL_URLS = ["/", "/manifest.webmanifest", "/icon.svg"];
 
 self.addEventListener("install", (event) => {
@@ -57,5 +57,40 @@ self.addEventListener("fetch", (event) => {
   // Cache-first for the static shell assets.
   event.respondWith(
     caches.match(request).then((cached) => cached || fetch(request))
+  );
+});
+
+// Web Push: show the notification the server sent.
+self.addEventListener("push", (event) => {
+  let data = { title: "Passalong", body: "", url: "/shelf" };
+  try {
+    if (event.data) data = { ...data, ...event.data.json() };
+  } catch (e) {
+    if (event.data) data.body = event.data.text();
+  }
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: "/icon.svg",
+      badge: "/icon.svg",
+      data: { url: data.url || "/shelf" },
+    })
+  );
+});
+
+// Tapping a notification focuses an open tab or opens the app at the target URL.
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = event.notification.data?.url || "/shelf";
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clients) => {
+      for (const client of clients) {
+        if ("focus" in client) {
+          client.navigate(url);
+          return client.focus();
+        }
+      }
+      return self.clients.openWindow(url);
+    })
   );
 });

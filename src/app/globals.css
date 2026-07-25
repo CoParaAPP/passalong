@@ -301,6 +301,20 @@ body {
   text-decoration: underline;
 }
 
+.push-note {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  background: #f4f1ea;
+  border: 1px solid #e0dccf;
+  border-radius: 0.5rem;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
 .request {
   flex: none;
   font-size: 0.75rem;

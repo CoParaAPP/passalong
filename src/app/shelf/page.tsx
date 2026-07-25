@@ -12,6 +12,7 @@ import { aliasedTable, and, desc, eq, isNull } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { requireOnboardedUserId } from "@/lib/guards";
 import { Nav } from "../nav";
+import { EnablePush } from "../enable-push";
 
 export const dynamic = "force-dynamic";
 
@@ -89,6 +90,7 @@ export default async function Shelf({
   return (
     <main className="shelf">
       <Nav active="shelf" />
+      <EnablePush />
       {reminders.length > 0 && (
         <ul className="reminders">
           {reminders.map((n) => (

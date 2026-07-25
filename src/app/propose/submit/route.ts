@@ -11,6 +11,7 @@ import { NextResponse } from "next/server";
 import { and, eq, inArray } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { requireOnboardedUserId } from "@/lib/guards";
+import { notify } from "@/lib/notify";
 import { TERMS_VERSION } from "@/lib/terms";
 
 export const dynamic = "force-dynamic";
@@ -104,6 +105,23 @@ export async function POST(request: Request) {
     offeredCardId: offeredValue,
     returnBy: returnByValue,
     termsVersionAgreed: TERMS_VERSION,
+  });
+
+  // Let the owner know, in-app and by push.
+  const [proposer] = await db
+    .select({ username: schema.users.username })
+    .from(schema.users)
+    .where(eq(schema.users.id, me))
+    .limit(1);
+  const [theCard] = await db
+    .select({ title: schema.cards.title })
+    .from(schema.cards)
+    .where(eq(schema.cards.id, cardId))
+    .limit(1);
+  await notify(toUserId, {
+    kind: "proposal_received",
+    body: `${proposer?.username ?? "A neighbor"} wants to ${type} "${theCard?.title ?? "a card"}".`,
+    url: "/proposals",
   });
 
   return NextResponse.redirect(new URL("/proposals", origin), { status: 303 });

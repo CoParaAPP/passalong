@@ -10,6 +10,7 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { requireOnboardedUserId } from "@/lib/guards";
+import { notify } from "@/lib/notify";
 
 export const dynamic = "force-dynamic";
 
@@ -47,6 +48,20 @@ export async function POST(
     proposalId: id,
     fromUserId: me,
     body: body.slice(0, 1000),
+  });
+
+  // Notify the other participant of the new message.
+  const otherId =
+    proposal.fromUserId === me ? proposal.toUserId : proposal.fromUserId;
+  const [sender] = await db
+    .select({ username: schema.users.username })
+    .from(schema.users)
+    .where(eq(schema.users.id, me))
+    .limit(1);
+  await notify(otherId, {
+    kind: "message",
+    body: `New message from ${sender?.username ?? "a neighbor"}.`,
+    url: `/proposals/${id}`,
   });
 
   return NextResponse.redirect(thread, { status: 303 });

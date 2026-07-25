@@ -206,3 +206,19 @@ export const notifications = pgTable("notifications", {
   // One reminder of a given kind per loan per member: the job is idempotent.
   unique("notifications_user_loan_kind").on(t.userId, t.loanId, t.kind),
 ]);
+
+// A member's Web Push subscription (one per device/browser). Used to deliver
+// notifications to a phone. The keys here are the browser's push keys, not any
+// Yoto or personal data.
+export const pushSubscriptions = pgTable("push_subscriptions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  endpoint: text("endpoint").notNull().unique(),
+  p256dh: text("p256dh").notNull(),
+  auth: text("auth").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});

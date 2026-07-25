@@ -12,6 +12,7 @@
 import "server-only";
 import { and, eq, isNotNull } from "drizzle-orm";
 import { db, schema } from "./db";
+import { sendPushToUser } from "./push";
 
 // How many days ahead counts as "due soon".
 const DUE_SOON_DAYS = 2;
@@ -88,8 +89,21 @@ export async function generateReturnReminders(
       .insert(schema.notifications)
       .values(rows)
       .onConflictDoNothing()
-      .returning({ id: schema.notifications.id });
+      .returning({
+        id: schema.notifications.id,
+        userId: schema.notifications.userId,
+        body: schema.notifications.body,
+      });
     created = inserted.length;
+
+    // Push each genuinely new reminder to the borrower's devices.
+    for (const n of inserted) {
+      await sendPushToUser(n.userId, {
+        title: "Passalong",
+        body: n.body,
+        url: "/shelf",
+      });
+    }
   }
 
   return { scanned: loans.length, dueSoon, overdue, created };
