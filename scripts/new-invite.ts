@@ -13,18 +13,18 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import { invites } from "../db/schema.ts";
 
-// Friendly, wholesome word pairs — easy to say out loud and share, and they
-// suit a neighborhood group better than a random string. e.g. "cozy-otter".
+// Fun, kid-silly word pairs — easy to say, fun to get, and they fit a group of
+// families way better than a random string. e.g. "turbo-taco", "zoomy-dino".
 const ADJECTIVES = [
-  "cozy", "sunny", "happy", "kind", "merry", "snug", "jolly", "breezy",
-  "cheery", "gentle", "bright", "lucky", "mellow", "plucky", "comfy", "sweet",
-  "chirpy", "dandy", "peppy", "rosy", "toasty", "sprightly", "wholesome", "chipper",
+  "giggly", "wiggly", "silly", "zappy", "zoomy", "bouncy", "sparkly", "wobbly",
+  "sneaky", "mighty", "turbo", "mega", "super", "jumbo", "funky", "zesty",
+  "dizzy", "goofy", "speedy", "cheeky", "wacky", "snazzy", "bubbly", "peppy",
 ];
 const NOUNS = [
-  "otter", "maple", "acorn", "fox", "robin", "clover", "pebble", "willow",
-  "sparrow", "cocoa", "mitten", "lantern", "meadow", "biscuit", "hedgehog",
-  "badger", "walnut", "poppy", "pinecone", "bumble", "sprout", "puddle",
-  "marigold", "chestnut",
+  "pizza", "cookie", "dino", "robot", "rocket", "bubble", "noodle", "waffle",
+  "pickle", "banana", "dragon", "unicorn", "jellybean", "popsicle", "muffin",
+  "taco", "penguin", "narwhal", "sprinkle", "wombat", "doodle", "gizmo",
+  "donut", "dumpling",
 ];
 
 function pick(list: string[]): string {
