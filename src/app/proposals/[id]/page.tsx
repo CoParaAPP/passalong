@@ -11,7 +11,7 @@ import { redirect } from "next/navigation";
 import { asc, eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { requireOnboardedUserId } from "@/lib/guards";
-import { Nav } from "../../nav";
+import { Hero } from "../../hero";
 
 export const dynamic = "force-dynamic";
 
@@ -74,8 +74,9 @@ export default async function Thread({
   const verb = proposal.type === "swap" ? "swap" : "borrow";
 
   return (
-    <main className="shelf">
-      <Nav active="proposals" />
+    <>
+      <Hero active="proposals" />
+      <main className="shelf">
       <header className="shelf-head">
         <h1>Messages with {other?.username ?? "a neighbor"}</h1>
         <p>
@@ -128,6 +129,7 @@ export default async function Thread({
         <a href="/proposals">Back to proposals</a> ·{" "}
         <a href={`/flag?proposal=${proposal.id}`}>Flag to organizer</a>
       </p>
-    </main>
+      </main>
+    </>
   );
 }

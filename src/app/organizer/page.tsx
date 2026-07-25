@@ -10,7 +10,7 @@
 import { aliasedTable, desc, eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { requireOrganizer } from "@/lib/guards";
-import { Nav } from "../nav";
+import { Hero } from "../hero";
 
 export const dynamic = "force-dynamic";
 
@@ -47,8 +47,9 @@ export default async function Organizer() {
   const resolved = flags.filter((f) => f.status === "resolved").slice(0, 20);
 
   return (
-    <main className="shelf">
-      <Nav active="organizer" isOrganizer />
+    <>
+      <Hero active="organizer" />
+      <main className="shelf">
       <header className="shelf-head">
         <h1>Organizer</h1>
         <p>
@@ -107,6 +108,7 @@ export default async function Organizer() {
           </ul>
         </>
       )}
-    </main>
+      </main>
+    </>
   );
 }

@@ -11,6 +11,7 @@ import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { getSessionUserId } from "@/lib/session";
+import { Hero } from "../hero";
 import {
   COVENANT_CLOSING,
   COVENANT_INTRO,
@@ -48,7 +49,9 @@ export default async function Welcome({
   const { error, username } = await searchParams;
 
   return (
-    <main className="onboard">
+    <>
+      <Hero />
+      <main className="onboard">
       <h1>Welcome</h1>
       <p>
         Your cards are synced and private. Two quick things before your shelf:
@@ -92,6 +95,7 @@ export default async function Welcome({
           Go to my shelf
         </button>
       </form>
-    </main>
+      </main>
+    </>
   );
 }

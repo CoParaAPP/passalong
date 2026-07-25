@@ -10,7 +10,7 @@
 import { eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { requireOnboardedUserId } from "@/lib/guards";
-import { Nav } from "../nav";
+import { Hero } from "../hero";
 
 export const dynamic = "force-dynamic";
 
@@ -52,8 +52,9 @@ export default async function Wishlist() {
   );
 
   return (
-    <main className="shelf">
-      <Nav active="wishlist" />
+    <>
+      <Hero active="wishlist" />
+      <main className="shelf">
       <header className="shelf-head">
         <h1>Your wishlist</h1>
         <p>
@@ -109,6 +110,7 @@ export default async function Wishlist() {
           shelves, cards you don&apos;t have will show up here.
         </p>
       )}
-    </main>
+      </main>
+    </>
   );
 }

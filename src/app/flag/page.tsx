@@ -10,7 +10,7 @@
 import { eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { requireOnboardedUserId } from "@/lib/guards";
-import { Nav } from "../nav";
+import { Hero } from "../hero";
 
 export const dynamic = "force-dynamic";
 
@@ -44,8 +44,9 @@ export default async function Flag({
   }
 
   return (
-    <main className="onboard">
-      <Nav active="report" />
+    <>
+      <Hero active="report" />
+      <main className="onboard">
       <h1>Tell the organizer</h1>
       <p>
         If something feels off, or you just need a hand, send it here. An
@@ -76,6 +77,7 @@ export default async function Flag({
           Send to organizer
         </button>
       </form>
-    </main>
+      </main>
+    </>
   );
 }

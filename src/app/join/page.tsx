@@ -7,6 +7,8 @@
  * they log in with Yoto; the account is only created once they return.
  */
 
+import { Hero } from "../hero";
+
 export const dynamic = "force-dynamic";
 
 export default async function Join({
@@ -16,7 +18,9 @@ export default async function Join({
 }) {
   const { error, code } = await searchParams;
   return (
-    <main className="onboard">
+    <>
+      <Hero />
+      <main className="onboard">
       <h1>Join the group</h1>
       <p>
         Passalong is invite-only. Enter the code a neighbor or organizer gave
@@ -46,6 +50,7 @@ export default async function Join({
       <p className="fineprint">
         Already a member? <a href="/auth/login">Connect your Yoto account</a>.
       </p>
-    </main>
+      </main>
+    </>
   );
 }

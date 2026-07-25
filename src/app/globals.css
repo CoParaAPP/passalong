@@ -2,23 +2,43 @@
  * Passalong: a private neighborhood group lends, borrows, and swaps Yoto cards.
  * Copyright (C) 2026 Edward McWilliams and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ *
+ * Warm, rounded, playful. One flamingo brand hue in three WCAG-AA roles, warm
+ * cream surfaces, pill buttons, soft shadows, and a rounded system font. Small
+ * teal/sun pops for personality.
  */
 
 :root {
-  --ink: #2a2622;
-  --paper: #faf7f0;
-  /* Yoto flamingo. One brand hue, three roles tuned for WCAG AA contrast:
-     - --accent (#f45436): brand flamingo. Theme color, large headings,
-       decorative fills. White text on it is only 3.4:1, so it is never a
-       small-text background.
-     - --accent-deep (#d33f22): interactive backgrounds (buttons, badges) with
-       white text — 4.7:1, passes AA.
-     - --accent-ink (#c0381e): accent text on the light paper — 5.1:1, passes AA. */
+  --ink: #3a3128;
+  --paper: #faf5ec;
+  --card: #fffdf9;
+  --hero: #f2e8d5;
+
+  /* Flamingo, three contrast-tuned roles:
+     --accent brand (theme, large headings), --accent-deep interactive
+     backgrounds with white text (AA 4.7:1), --accent-ink accent text (AA 5:1). */
   --accent: #f45436;
   --accent-deep: #d33f22;
   --accent-ink: #c0381e;
   --on-accent: #ffffff;
-  --muted: #78706a;
+
+  --muted: #8b8175;
+
+  /* Playful pops and semantic tones. */
+  --teal: #1f9e93;
+  --gold: #8a6d3b;
+  --amber: #9a6b2f;
+  --sun: #e8a72c;
+
+  --r-card: 18px;
+  --r-input: 14px;
+  --r-pill: 999px;
+  --shadow: 0 2px 10px rgba(58, 49, 40, 0.07);
+  --shadow-soft: 0 1px 4px rgba(58, 49, 40, 0.06);
+  --border: #eaddc8;
+
+  --font: ui-rounded, "SF Pro Rounded", "Hiragino Maru Gothic ProN", Quicksand,
+    system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 * {
@@ -27,34 +47,108 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    sans-serif;
+  font-family: var(--font);
   color: var(--ink);
   background: var(--paper);
 }
 
-.landing {
-  max-width: 26rem;
+/* Hero: logo + wordmark, with nav when signed in. */
+.hero {
+  width: 100%;
+  background: var(--hero);
+  border-radius: 0 0 26px 26px;
+  box-shadow: var(--shadow);
+}
+
+.hero-inner {
+  max-width: 60rem;
   margin: 0 auto;
-  padding: 4rem 1.5rem;
+  padding: 0.7rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-right: auto;
+  text-decoration: none;
+}
+
+.brand-logo {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: block;
+}
+
+.brand-name {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--accent-ink);
+  letter-spacing: -0.01em;
+}
+
+.hnav {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.hnav a {
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #6f6456;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--r-pill);
+}
+
+.hnav a:hover {
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--accent-ink);
+}
+
+.hnav a.on {
+  background: var(--accent-deep);
+  color: var(--on-accent);
+}
+
+/* Landing */
+.landing {
+  max-width: 27rem;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
   text-align: center;
 }
 
 .landing h1 {
   color: var(--accent-ink);
   font-size: 2.25rem;
+  font-weight: 800;
   margin-bottom: 0.5rem;
 }
 
-.connect {
-  margin-top: 1.5rem;
-  padding: 0.75rem 1.5rem;
+/* Buttons — pills everywhere. */
+.connect,
+.primary,
+.offer-all {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.7rem 1.4rem;
+  font-family: var(--font);
   font-size: 1rem;
+  font-weight: 700;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: var(--r-pill);
   background: var(--accent-deep);
-  color: #fff;
+  color: var(--on-accent);
+  text-decoration: none;
   cursor: pointer;
+  box-shadow: var(--shadow-soft);
 }
 
 .connect:disabled {
@@ -63,21 +157,29 @@ body {
 }
 
 .fineprint {
-  margin-top: 2.5rem;
-  font-size: 0.8rem;
+  margin-top: 2rem;
+  font-size: 0.82rem;
   color: var(--muted);
+}
+
+.fineprint a,
+.landing a {
+  color: var(--accent-ink);
+  font-weight: 700;
 }
 
 /* Onboarding (join, welcome) */
 .onboard {
-  max-width: 34rem;
+  max-width: 36rem;
   margin: 0 auto;
-  padding: 2.5rem 1.25rem 4rem;
+  padding: 1.8rem 1.4rem 4rem;
 }
 
 .onboard h1 {
   color: var(--accent-ink);
-  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 0.4rem;
 }
 
 .stack {
@@ -89,49 +191,43 @@ body {
 
 .stack label {
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .stack input[type="text"],
-.stack input:not([type]) {
-  padding: 0.6rem 0.7rem;
+.stack input:not([type]),
+.stack input[type="date"],
+.stack select {
+  padding: 0.7rem 0.85rem;
+  font-family: var(--font);
   font-size: 1rem;
-  border: 1px solid #d8d1c9;
-  border-radius: 0.45rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-input);
   background: #fff;
 }
 
-.primary {
-  margin-top: 0.75rem;
-  padding: 0.7rem 1.2rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 0.5rem;
-  background: var(--accent-deep);
-  color: #fff;
-  cursor: pointer;
-}
-
 .form-error {
-  background: #fbeaea;
-  border: 1px solid #e6b8b8;
+  background: #fbeae4;
+  border: 1px solid #f3c6b6;
   color: #8a2b2b;
-  padding: 0.6rem 0.8rem;
-  border-radius: 0.45rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--r-input);
   font-size: 0.9rem;
 }
 
 .covenant {
-  border: 1px solid #e0dccf;
-  background: #fbf9f3;
-  border-radius: 0.6rem;
-  padding: 1rem 1.1rem;
-  margin-top: 0.5rem;
+  border: 1px solid #f0e7d8;
+  background: var(--card);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+  padding: 1.1rem 1.2rem;
+  margin-top: 0.75rem;
 }
 
 .covenant h2 {
   margin: 0 0 0.5rem;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
+  font-weight: 800;
   color: var(--accent-ink);
 }
 
@@ -140,56 +236,56 @@ body {
 }
 
 .covenant dt {
-  font-weight: 600;
-  margin-top: 0.75rem;
+  font-weight: 800;
+  margin-top: 0.7rem;
 }
 
 .covenant dd {
   margin: 0.15rem 0 0;
-  color: #4a443f;
+  color: #6b6153;
   font-size: 0.92rem;
+  line-height: 1.4;
 }
 
 .agree {
   display: flex;
   align-items: flex-start;
-  gap: 0.5rem;
+  gap: 0.55rem;
   font-weight: 400 !important;
-  margin-top: 0.75rem;
+  margin-top: 0.9rem;
 }
 
-/* Shelf */
+.agree input {
+  margin-top: 0.15rem;
+  accent-color: var(--accent-deep);
+}
+
+/* Shelf / app pages */
 .shelf {
   max-width: 60rem;
   margin: 0 auto;
-  padding: 2rem 1.25rem 4rem;
+  padding: 1.6rem 1.25rem 4rem;
 }
 
-.nav {
-  display: flex;
-  gap: 1.25rem;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid #e4ded1;
-  padding-bottom: 0.5rem;
-}
-
-.nav a {
-  text-decoration: none;
-  color: var(--muted);
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-.nav a.on {
+.shelf-head h1 {
   color: var(--accent-ink);
+  font-size: 1.9rem;
+  font-weight: 800;
+  margin: 0.2rem 0 0.2rem;
+}
+
+.shelf-head p {
+  color: var(--muted);
+  margin-top: 0;
 }
 
 .shelf-head.section {
-  margin-top: 2.5rem;
+  margin-top: 2.4rem;
 }
 
 .shelf-head.section h2 {
   color: var(--accent-ink);
+  font-weight: 800;
   margin-bottom: 0.25rem;
 }
 
@@ -197,6 +293,12 @@ body {
   color: var(--muted);
   font-size: 0.95rem;
   padding: 0.5rem 0;
+}
+
+.empty a,
+.shelf a:not(.brand):not(.hnav a):not(.toggle) {
+  color: var(--accent-ink);
+  font-weight: 700;
 }
 
 .offers {
@@ -218,6 +320,17 @@ body {
   color: var(--muted);
 }
 
+.request {
+  flex: none;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--on-accent);
+  background: var(--accent-deep);
+  padding: 0.25rem 0.7rem;
+  border-radius: var(--r-pill);
+}
+
 /* Message thread */
 .thread {
   list-style: none;
@@ -232,15 +345,15 @@ body {
   max-width: 80%;
   align-self: flex-start;
   background: #fff;
-  border: 1px solid #e0dccf;
-  border-radius: 0.7rem;
-  padding: 0.55rem 0.75rem;
+  border: 1px solid #f0e7d8;
+  border-radius: 16px;
+  padding: 0.55rem 0.8rem;
 }
 
 .msg.mine {
   align-self: flex-end;
-  background: #fdece7;
-  border-color: #f6cdc2;
+  background: #ffe9e2;
+  border-color: #f8cdc0;
 }
 
 .msg-body {
@@ -263,10 +376,11 @@ body {
 
 .msg-form textarea {
   flex: 1;
-  padding: 0.55rem 0.7rem;
+  padding: 0.6rem 0.8rem;
   font: inherit;
-  border: 1px solid #d8d1c9;
-  border-radius: 0.5rem;
+  font-family: var(--font);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-input);
   resize: vertical;
 }
 
@@ -284,21 +398,24 @@ body {
   gap: 0.5rem;
 }
 
-.reminders .reminder {
+.reminders .reminder,
+.reminder {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  background: #f4f1ea;
-  border: 1px solid #e0dccf;
-  border-radius: 0.5rem;
-  padding: 0.6rem 0.8rem;
+  background: #fbf4e8;
+  border: 1px solid #ecdfc8;
+  color: var(--ink);
+  border-radius: 14px;
+  padding: 0.6rem 0.85rem;
   font-size: 0.9rem;
 }
 
-.reminders .reminder.overdue {
-  background: #fbeeea;
-  border-color: #e6c3b8;
+.reminders .reminder.overdue,
+.reminder.overdue {
+  background: #fbeae4;
+  border-color: #f3c6b6;
 }
 
 .dismiss {
@@ -323,22 +440,12 @@ body {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.6rem;
-  background: #f4f1ea;
-  border: 1px solid #e0dccf;
-  border-radius: 0.5rem;
-  padding: 0.6rem 0.8rem;
+  background: #fbf4e8;
+  border: 1px solid #ecdfc8;
+  border-radius: 14px;
+  padding: 0.6rem 0.85rem;
   margin-bottom: 1rem;
   font-size: 0.9rem;
-}
-
-.request {
-  flex: none;
-  font-size: 0.75rem;
-  text-decoration: none;
-  color: #fff;
-  background: var(--accent-deep);
-  padding: 0.2rem 0.5rem;
-  border-radius: 0.35rem;
 }
 
 /* Proposals */
@@ -352,10 +459,11 @@ body {
 }
 
 .proposal {
-  border: 1px solid #e4ded1;
-  border-radius: 0.6rem;
-  padding: 0.9rem 1rem;
-  background: #fbf9f3;
+  border: 1px solid #f0e7d8;
+  border-radius: var(--r-card);
+  padding: 0.95rem 1.1rem;
+  background: var(--card);
+  box-shadow: var(--shadow-soft);
 }
 
 .proposal-line {
@@ -378,27 +486,22 @@ body {
 }
 
 .accept-form input[type="text"] {
-  padding: 0.5rem 0.6rem;
-  border: 1px solid #d8d1c9;
-  border-radius: 0.4rem;
+  padding: 0.55rem 0.7rem;
+  font-family: var(--font);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-input);
   font-size: 0.9rem;
-}
-
-.accept-form .toggle,
-.proposal-actions .toggle {
-  width: auto;
-  padding: 0.45rem 1rem;
 }
 
 .status {
   margin: 0;
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.88rem;
+  font-weight: 700;
   text-transform: capitalize;
 }
 
 .status-accepted {
-  color: var(--accent-ink);
+  color: var(--teal);
 }
 
 .status-declined {
@@ -409,47 +512,30 @@ body {
   color: var(--muted);
 }
 
-.shelf-head h1 {
-  color: var(--accent-ink);
-  margin-bottom: 0.25rem;
-}
-
-.shelf-head p {
-  color: var(--muted);
-  margin-top: 0;
-}
-
-.offer-all {
-  margin-top: 0.5rem;
-  padding: 0.6rem 1.1rem;
-  font-size: 0.95rem;
-  border: none;
-  border-radius: 0.5rem;
-  background: var(--accent-deep);
-  color: #fff;
-  cursor: pointer;
-}
-
+/* Card grid */
 .grid {
   list-style: none;
-  margin: 1.5rem 0 0;
+  margin: 0.6rem 0 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1.1rem;
 }
 
 .cell {
   display: flex;
   flex-direction: column;
+  background: var(--card);
+  border-radius: var(--r-card);
+  padding: 0.7rem;
+  box-shadow: var(--shadow);
 }
 
 .art {
   position: relative;
-  /* Yoto card covers are a fixed 250x396 portrait, with the title in the
-     lower third. Match that ratio so nothing is cropped. */
+  /* Yoto card covers are a fixed 250x396 portrait; match it so nothing crops. */
   aspect-ratio: 250 / 396;
-  border-radius: 0.6rem;
+  border-radius: 12px;
   overflow: hidden;
   background: #ece7dc;
 }
@@ -475,32 +561,38 @@ body {
 
 .badge {
   position: absolute;
-  top: 0.4rem;
-  right: 0.4rem;
+  top: 0.45rem;
+  right: 0.45rem;
   background: var(--accent-deep);
-  color: #fff;
+  color: var(--on-accent);
   font-size: 0.7rem;
-  padding: 0.15rem 0.45rem;
-  border-radius: 999px;
+  font-weight: 700;
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--r-pill);
 }
 
 .badge.limits {
-  background: #8a6d3b;
+  background: var(--gold);
+}
+
+.badge.loan {
+  background: var(--amber);
+}
+
+.title {
+  margin: 0.55rem 0.15rem 0.6rem;
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.card-toggle {
+  margin-top: auto;
 }
 
 .card-toggle.two {
   display: flex;
   gap: 0.4rem;
-}
-
-.toggle.limits {
-  background: #f0ead9;
-  color: #6b5a2e;
-  border-color: #e0d4b0;
-}
-
-.badge.loan {
-  background: #9a6b2f;
 }
 
 .loan-note {
@@ -509,40 +601,62 @@ body {
   color: var(--muted);
 }
 
-.reminder {
-  background: #f4f1ea;
-  border: 1px solid #e0dccf;
-  color: var(--ink);
-  padding: 0.6rem 0.8rem;
-  border-radius: 0.5rem;
-  font-size: 0.9rem;
-}
-
-.title {
-  margin: 0.5rem 0 0.5rem;
-  font-size: 0.85rem;
-  line-height: 1.25;
-}
-
-.card-toggle {
-  margin-top: auto;
-}
-
+/* Small pill buttons on cards + proposal actions. */
 .toggle {
   width: 100%;
-  padding: 0.4rem 0.5rem;
+  padding: 0.45rem 0.8rem;
+  font-family: var(--font);
   font-size: 0.8rem;
-  border-radius: 0.4rem;
+  font-weight: 700;
+  border-radius: var(--r-pill);
   cursor: pointer;
-  border: 1px solid var(--accent-deep);
+  border: 1.5px solid var(--accent-deep);
+  background: var(--accent-deep);
+  color: var(--on-accent);
 }
 
 .toggle.offer {
   background: var(--accent-deep);
-  color: #fff;
+  color: var(--on-accent);
+  box-shadow: var(--shadow-soft);
 }
 
 .toggle.revoke {
-  background: transparent;
+  background: #fff;
   color: var(--accent-ink);
+  border-color: var(--border);
+}
+
+.toggle.limits {
+  background: #f0ead9;
+  color: #6b5a2e;
+  border-color: #e0d4b0;
+}
+
+.card-toggle.two .toggle,
+.accept-form .toggle,
+.proposal-actions .toggle {
+  width: auto;
+  flex: 1;
+}
+
+/* Playful color-pop chips. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--r-pill);
+}
+
+.chip.teal {
+  background: #e4f4f2;
+  color: var(--teal);
+}
+
+.chip.sun {
+  background: #fdf1d6;
+  color: #9a7415;
 }

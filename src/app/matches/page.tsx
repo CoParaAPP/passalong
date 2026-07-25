@@ -11,7 +11,7 @@
 import { and, eq, inArray, ne } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { requireOnboardedUserId } from "@/lib/guards";
-import { Nav } from "../nav";
+import { Hero } from "../hero";
 
 export const dynamic = "force-dynamic";
 
@@ -75,8 +75,9 @@ export default async function Matches() {
   const matches = [...byCard.values()];
 
   return (
-    <main className="shelf">
-      <Nav active="matches" />
+    <>
+      <Hero active="matches" />
+      <main className="shelf">
       <header className="shelf-head">
         <h1>Matches</h1>
         <p>
@@ -128,6 +129,7 @@ export default async function Matches() {
           will show up here.
         </p>
       )}
-    </main>
+      </main>
+    </>
   );
 }

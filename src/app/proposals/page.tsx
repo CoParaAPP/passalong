@@ -10,7 +10,7 @@
 import { desc, eq, inArray } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { requireOnboardedUserId } from "@/lib/guards";
-import { Nav } from "../nav";
+import { Hero } from "../hero";
 
 export const dynamic = "force-dynamic";
 
@@ -69,8 +69,9 @@ export default async function Proposals() {
   }
 
   return (
-    <main className="shelf">
-      <Nav active="proposals" />
+    <>
+      <Hero active="proposals" />
+      <main className="shelf">
       <header className="shelf-head">
         <h1>Proposals</h1>
         <p>Requests to you, and the ones you&apos;ve sent.</p>
@@ -167,6 +168,7 @@ export default async function Proposals() {
           ))}
         </ul>
       )}
-    </main>
+      </main>
+    </>
   );
 }
