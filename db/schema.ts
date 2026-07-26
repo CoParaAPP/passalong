@@ -15,6 +15,7 @@ import {
   timestamp,
   date,
   boolean,
+  integer,
   unique,
 } from "drizzle-orm/pg-core";
 
@@ -41,17 +42,22 @@ export const users = pgTable("users", {
     .defaultNow(),
 });
 
-// Invite-only gate. An organizer mints a code; a brand-new Yoto login can only
-// create an account by presenting an unused one. Existing members never need it.
+// Invite-only gate. An organizer mints a code and shares it; a brand-new Yoto
+// login needs a valid one to create an account. Existing members never need it.
+// Codes are reusable — one standing code fits a small, word-of-mouth group. The
+// gate keeps strangers out; it isn't where the real security lives.
 export const invites = pgTable("invites", {
   id: uuid("id").primaryKey().defaultRandom(),
   code: text("code").notNull().unique(),
-  // Optional reminder of who the code was made for. Not shown to members.
+  // Optional reminder of what the code is for. Not shown to members.
   note: text("note"),
+  // How many members have joined with this code. Just for the organizer's view.
+  uses: integer("uses").notNull().default(0),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-  // Set atomically when the code is claimed, so a code works exactly once.
+  // Vestigial from the old single-use model. Kept so migrations stay additive;
+  // the reusable-invite logic no longer reads them.
   usedByUserId: uuid("used_by_user_id").references(() => users.id, {
     onDelete: "set null",
   }),

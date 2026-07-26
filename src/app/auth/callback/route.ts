@@ -12,7 +12,7 @@
 
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { and, eq, isNull } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { encrypt } from "@/lib/crypto";
 import { isInviteUsable } from "@/lib/invites";
@@ -91,7 +91,8 @@ export async function GET(request: Request) {
         .where(eq(schema.users.id, member.id));
     }
   } else {
-    // Brand new account: only allowed in with a valid, unused invite.
+    // Brand new account: needs a valid invite. Codes are reusable, so this just
+    // checks the code exists, then counts the join for the organizer's view.
     const inviteCode = cookieStore.get(PENDING_INVITE)?.value ?? "";
     if (!(await isInviteUsable(inviteCode))) {
       return errorPage(
@@ -99,35 +100,21 @@ export async function GET(request: Request) {
       );
     }
 
-    try {
-      member = await db.transaction(async (tx) => {
-        const [created] = await tx
-          .insert(schema.users)
-          .values({ yotoSub: sub, refreshTokenEncrypted })
-          .returning({
-            id: schema.users.id,
-            username: schema.users.username,
-            covenantVersionAgreed: schema.users.covenantVersionAgreed,
-          });
-
-        // Claim the invite atomically: only succeeds if still unused.
-        const claimed = await tx
-          .update(schema.invites)
-          .set({ usedByUserId: created.id, usedAt: new Date() })
-          .where(
-            and(
-              eq(schema.invites.code, inviteCode),
-              isNull(schema.invites.usedByUserId)
-            )
-          )
-          .returning({ id: schema.invites.id });
-        if (claimed.length === 0) throw new Error("INVITE_TAKEN");
-
-        return created;
+    const [created] = await db
+      .insert(schema.users)
+      .values({ yotoSub: sub, refreshTokenEncrypted })
+      .returning({
+        id: schema.users.id,
+        username: schema.users.username,
+        covenantVersionAgreed: schema.users.covenantVersionAgreed,
       });
-    } catch {
-      return errorPage("That invite was just used. Ask the organizer for another.");
-    }
+    member = created;
+
+    await db
+      .update(schema.invites)
+      .set({ uses: sql`${schema.invites.uses} + 1` })
+      .where(eq(schema.invites.code, inviteCode));
+
     cookieStore.delete(PENDING_INVITE);
   }
 

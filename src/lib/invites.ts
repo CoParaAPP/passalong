@@ -3,21 +3,20 @@
  * Copyright (C) 2026 Edward McWilliams and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  *
- * Invite-code helpers. The actual claim happens atomically inside the login
- * callback so a code can be used exactly once even under a race.
+ * Invite-code helpers. Codes are reusable — a valid one just needs to exist.
  */
 
 import "server-only";
-import { and, eq, isNull } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db, schema } from "./db";
 
-/** True if this code exists and has not been used. A cheap pre-check for /join. */
+/** True if this code exists. Codes are reusable, so existence is enough. */
 export async function isInviteUsable(code: string): Promise<boolean> {
   if (!code) return false;
   const rows = await db
     .select({ id: schema.invites.id })
     .from(schema.invites)
-    .where(and(eq(schema.invites.code, code), isNull(schema.invites.usedByUserId)))
+    .where(eq(schema.invites.code, code))
     .limit(1);
   return rows.length > 0;
 }
