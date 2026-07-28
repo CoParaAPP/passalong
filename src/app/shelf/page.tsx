@@ -19,10 +19,10 @@ export const dynamic = "force-dynamic";
 export default async function Shelf({
   searchParams,
 }: {
-  searchParams: Promise<{ returned?: string }>;
+  searchParams: Promise<{ returned?: string; handedback?: string }>;
 }) {
   const userId = await requireOnboardedUserId();
-  const { returned } = await searchParams;
+  const { returned, handedback } = await searchParams;
 
   // Unread reminders from the scheduled return-reminder job.
   const reminders = await db
@@ -75,6 +75,7 @@ export default async function Shelf({
       title: schema.cards.title,
       cover: schema.cards.coverImageUrl,
       dueBy: schema.loans.dueBy,
+      loanId: schema.loans.id,
       lenderName: lender.username,
     })
     .from(schema.loans)
@@ -131,6 +132,12 @@ export default async function Shelf({
           <p className="reminder">
             Marked returned. When you get {returned} back, tap it into your own
             Yoto player to restore it to your library.
+          </p>
+        )}
+        {handedback && (
+          <p className="reminder">
+            Marked returned. The owner has been reminded to tap {handedback} back
+            into their player.
           </p>
         )}
         {unlistedCount > 0 && (
@@ -240,6 +247,12 @@ export default async function Shelf({
                   From {c.lenderName ?? "a neighbor"}
                   {c.dueBy && `, due ${c.dueBy}`}
                 </p>
+                <form method="post" action="/shelf/return" className="card-toggle">
+                  <input type="hidden" name="loanId" value={c.loanId ?? ""} />
+                  <button type="submit" className="toggle revoke">
+                    Mark returned
+                  </button>
+                </form>
               </li>
             ))}
           </ul>
