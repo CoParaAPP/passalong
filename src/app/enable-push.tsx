@@ -3,9 +3,8 @@
  * Copyright (C) 2026 Edward McWilliams and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  *
- * Per-member opt-in to push. Asks permission, subscribes via the service
- * worker, and stores the subscription server-side. Notifications are off until
- * the member chooses this.
+ * Per-member push toggle. Shows the current state and lets a member turn
+ * notifications on or off anytime. Notifications are off until they choose.
  */
 
 "use client";
@@ -23,10 +22,10 @@ function urlBase64ToUint8Array(base64: string): Uint8Array {
   return out;
 }
 
-type State = "unsupported" | "prompt" | "enabled" | "blocked" | "working";
+type State = "unsupported" | "blocked" | "off" | "on" | "working";
 
 export function EnablePush() {
-  const [state, setState] = useState<State>("prompt");
+  const [state, setState] = useState<State>("off");
 
   useEffect(() => {
     if (
@@ -44,16 +43,16 @@ export function EnablePush() {
     }
     navigator.serviceWorker.ready.then(async (reg) => {
       const existing = await reg.pushManager.getSubscription();
-      setState(existing ? "enabled" : "prompt");
+      setState(existing ? "on" : "off");
     });
   }, []);
 
-  async function enable() {
+  async function turnOn() {
     setState("working");
     try {
       const permission = await Notification.requestPermission();
       if (permission !== "granted") {
-        setState(permission === "denied" ? "blocked" : "prompt");
+        setState(permission === "denied" ? "blocked" : "off");
         return;
       }
       const reg = await navigator.serviceWorker.ready;
@@ -66,20 +65,50 @@ export function EnablePush() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify(sub),
       });
-      setState(res.ok ? "enabled" : "prompt");
+      setState(res.ok ? "on" : "off");
     } catch {
-      setState("prompt");
+      setState("off");
     }
   }
 
-  if (state === "unsupported" || state === "enabled") return null;
+  async function turnOff() {
+    setState("working");
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.getSubscription();
+      if (sub) {
+        await fetch("/api/push/subscribe", {
+          method: "DELETE",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(sub),
+        });
+        await sub.unsubscribe();
+      }
+      setState("off");
+    } catch {
+      setState("on");
+    }
+  }
+
+  if (state === "unsupported") return null;
 
   if (state === "blocked") {
     return (
       <p className="push-note">
-        Notifications are blocked in your browser settings. Enable them for this
+        Notifications are blocked in your browser settings. Turn them on for this
         site to get return reminders and proposals.
       </p>
+    );
+  }
+
+  if (state === "on") {
+    return (
+      <div className="push-note">
+        <span>🔔 Notifications are on.</span>
+        <button type="button" className="dismiss" onClick={turnOff}>
+          Turn off
+        </button>
+      </div>
     );
   }
 
@@ -89,10 +118,11 @@ export function EnablePush() {
       <button
         type="button"
         className="toggle offer"
-        onClick={enable}
+        style={{ width: "auto" }}
+        onClick={turnOn}
         disabled={state === "working"}
       >
-        {state === "working" ? "Enabling…" : "Enable notifications"}
+        {state === "working" ? "Working…" : "Turn on notifications"}
       </button>
     </div>
   );
