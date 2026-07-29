@@ -7,7 +7,7 @@
  * organizers reach this page.
  */
 
-import { aliasedTable, desc, eq } from "drizzle-orm";
+import { aliasedTable, count, desc, eq, inArray } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { requireOrganizer } from "@/lib/guards";
 import { Hero } from "../hero";
@@ -56,6 +56,19 @@ export default async function Organizer() {
     .from(schema.invites)
     .orderBy(desc(schema.invites.createdAt));
 
+  // Group pulse: aggregate counts only, never a who-owns-what list.
+  const [{ members }] = await db
+    .select({ members: count() })
+    .from(schema.users);
+  const [{ offered }] = await db
+    .select({ offered: count() })
+    .from(schema.ownership)
+    .where(inArray(schema.ownership.visibility, ["lend", "trade"]));
+  const [{ borrows }] = await db
+    .select({ borrows: count() })
+    .from(schema.loans)
+    .where(eq(schema.loans.status, "active"));
+
   return (
     <>
       <Hero active="organizer" />
@@ -64,6 +77,15 @@ export default async function Organizer() {
         <h1>Organizer</h1>
         <p>
           {open.length} open flag{open.length === 1 ? "" : "s"} to look at.
+        </p>
+      </header>
+
+      <header className="shelf-head section">
+        <h2>Group</h2>
+        <p>
+          {members} member{members === 1 ? "" : "s"} · {offered} card
+          {offered === 1 ? "" : "s"} offered · {borrows} active borrow
+          {borrows === 1 ? "" : "s"}
         </p>
       </header>
 
