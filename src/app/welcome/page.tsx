@@ -18,6 +18,7 @@ import {
   COVENANT_PROMISES,
   COVENANT_TITLE,
 } from "@/lib/covenant";
+import { TERMS_CLOSING, TERMS_PROMISES, TERMS_TITLE } from "@/lib/terms";
 
 export const dynamic = "force-dynamic";
 
@@ -86,9 +87,23 @@ export default async function Welcome({
           <p>{COVENANT_CLOSING}</p>
         </section>
 
+        <section className="covenant" aria-label={TERMS_TITLE}>
+          <h2>{TERMS_TITLE}</h2>
+          <p>When you borrow or swap, these apply:</p>
+          <dl>
+            {TERMS_PROMISES.map((p) => (
+              <div key={p.title}>
+                <dt>{p.title}</dt>
+                <dd>{p.body}</dd>
+              </div>
+            ))}
+          </dl>
+          <p>{TERMS_CLOSING}</p>
+        </section>
+
         <label className="agree">
           <input type="checkbox" name="agree" value="yes" required /> I&apos;ve
-          read and agree to the covenant.
+          read and agree to the covenant and the borrow &amp; swap terms.
         </label>
 
         <button type="submit" className="primary">

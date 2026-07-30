@@ -9,7 +9,9 @@
  * version here whenever that wording changes so agreement history stays honest.
  */
 
-export const COVENANT_VERSION = "1";
+// v2 folds the borrow & swap terms into the one-time signup agreement, so
+// borrowing no longer needs a checkbox every time.
+export const COVENANT_VERSION = "2";
 export const COVENANT_TITLE = "Our Community Covenant";
 
 export const COVENANT_INTRO =

@@ -102,14 +102,18 @@ export default async function Browse() {
                     <span className="offer-type">
                       {OFFER_LABEL[c.visibility] ?? "offered"}
                     </span>
-                    <a
-                      className="request"
-                      href={`/propose?to=${n.ownerId}&card=${c.cardId}&type=${
-                        c.visibility === "trade" ? "swap" : "borrow"
-                      }`}
-                    >
-                      {c.visibility === "trade" ? "Propose swap" : "Request"}
-                    </a>
+                    <form method="post" action="/request">
+                      <input type="hidden" name="to" value={n.ownerId} />
+                      <input type="hidden" name="card" value={c.cardId} />
+                      <input
+                        type="hidden"
+                        name="type"
+                        value={c.visibility === "trade" ? "swap" : "borrow"}
+                      />
+                      <button type="submit" className="request">
+                        {c.visibility === "trade" ? "Propose swap" : "Request"}
+                      </button>
+                    </form>
                   </div>
                 </li>
               ))}

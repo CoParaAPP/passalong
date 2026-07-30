@@ -72,6 +72,9 @@ export default async function Thread({
     .orderBy(asc(schema.messages.createdAt));
 
   const verb = proposal.type === "swap" ? "swap" : "borrow";
+  const iAmOwner = proposal.toUserId === me;
+  const pending = proposal.status === "pending";
+  const today = new Date().toISOString().slice(0, 10);
 
   return (
     <>
@@ -89,6 +92,47 @@ export default async function Thread({
             ` · due ${proposal.returnBy}`}
         </p>
       </header>
+
+      {pending && iAmOwner && (
+        <div className="proposal">
+          <p className="proposal-line">
+            <strong>{other?.username ?? "A neighbor"}</strong> is asking to{" "}
+            {verb} <strong>{proposal.cardTitle}</strong>.
+          </p>
+          <div className="proposal-actions">
+            <form method="post" action="/proposals/respond" className="accept-form">
+              <input type="hidden" name="proposalId" value={proposal.id} />
+              <input type="hidden" name="action" value="accept" />
+              {proposal.type === "borrow" && (
+                <label className="due-label">
+                  Back by (optional, for a reminder)
+                  <input type="date" name="returnBy" min={today} />
+                </label>
+              )}
+              <button type="submit" className="toggle offer">
+                Accept
+              </button>
+            </form>
+            <form method="post" action="/proposals/respond">
+              <input type="hidden" name="proposalId" value={proposal.id} />
+              <input type="hidden" name="action" value="decline" />
+              <button type="submit" className="toggle revoke">
+                Decline
+              </button>
+            </form>
+          </div>
+          <p className="fineprint">
+            By accepting you both agree to the borrow &amp; swap terms you signed
+            when you joined.
+          </p>
+        </div>
+      )}
+
+      {pending && !iAmOwner && (
+        <p className="status status-pending">
+          Waiting for {other?.username ?? "them"} to accept.
+        </p>
+      )}
 
       <ul className="thread">
         {thread.length === 0 ? (

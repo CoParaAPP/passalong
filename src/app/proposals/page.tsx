@@ -95,43 +95,11 @@ export default async function Proposals() {
                   `, offering ${offeredTitles.get(p.offeredCardId) ?? "a card"}`}
                 .
               </p>
-              {p.status === "pending" ? (
-                <div className="proposal-actions">
-                  <form method="post" action="/proposals/respond" className="accept-form">
-                    <input type="hidden" name="proposalId" value={p.id} />
-                    <input type="hidden" name="action" value="accept" />
-                    <input
-                      type="text"
-                      name="conditionNote"
-                      placeholder="Note on condition (optional)"
-                      maxLength={200}
-                    />
-                    <label className="agree">
-                      <input type="checkbox" name="agree" value="yes" required /> I
-                      agree to the borrow &amp; swap terms for this exchange.
-                    </label>
-                    <button type="submit" className="toggle offer">
-                      Accept
-                    </button>
-                  </form>
-                  <form method="post" action="/proposals/respond">
-                    <input type="hidden" name="proposalId" value={p.id} />
-                    <input type="hidden" name="action" value="decline" />
-                    <button type="submit" className="toggle revoke">
-                      Decline
-                    </button>
-                  </form>
-                </div>
-              ) : (
-                <p className={`status status-${p.status}`}>
-                  {p.status}
-                  {p.status === "accepted" && p.conditionNote
-                    ? ` — "${p.conditionNote}"`
-                    : ""}
-                </p>
-              )}
+              <p className={`status status-${p.status}`}>
+                {p.status === "pending" ? "open to accept or decline" : p.status}
+              </p>
               <p className="proposal-line">
-                <a href={`/proposals/${p.id}`}>Messages</a>
+                <a href={`/proposals/${p.id}`}>Open</a>
               </p>
             </li>
           ))}
@@ -155,14 +123,9 @@ export default async function Proposals() {
                 <strong>{p.cardTitle}</strong>
                 {p.type === "borrow" && p.returnBy && `, back by ${p.returnBy}`}.
               </p>
-              <p className={`status status-${p.status}`}>
-                {p.status}
-                {p.status === "accepted" && p.conditionNote
-                  ? ` — "${p.conditionNote}"`
-                  : ""}
-              </p>
+              <p className={`status status-${p.status}`}>{p.status}</p>
               <p className="proposal-line">
-                <a href={`/proposals/${p.id}`}>Messages</a>
+                <a href={`/proposals/${p.id}`}>Open</a>
               </p>
             </li>
           ))}

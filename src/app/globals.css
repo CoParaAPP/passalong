@@ -349,13 +349,16 @@ a {
 
 .request {
   flex: none;
+  font-family: var(--font);
   font-size: 0.78rem;
   font-weight: 700;
   text-decoration: none;
   color: var(--on-accent);
   background: var(--accent-deep);
-  padding: 0.25rem 0.7rem;
+  padding: 0.35rem 0.8rem;
+  border: none;
   border-radius: var(--r-pill);
+  cursor: pointer;
 }
 
 /* Message thread */
@@ -514,6 +517,23 @@ a {
 
 .accept-form input[type="text"] {
   padding: 0.55rem 0.7rem;
+  font-family: var(--font);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-input);
+  font-size: 0.9rem;
+}
+
+.due-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.due-label input {
+  padding: 0.5rem 0.6rem;
   font-family: var(--font);
   border: 1.5px solid var(--border);
   border-radius: var(--r-input);
