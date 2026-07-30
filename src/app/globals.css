@@ -331,6 +331,22 @@ a {
   color: var(--muted);
 }
 
+.neighbor-name {
+  margin: 1.2rem 0 0.4rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.offer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin-top: auto;
+  padding-top: 0.4rem;
+}
+
 .request {
   flex: none;
   font-size: 0.78rem;
