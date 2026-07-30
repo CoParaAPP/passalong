@@ -7,7 +7,7 @@
  */
 
 import { NextResponse } from "next/server";
-import { eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { requireOnboardedUserId } from "@/lib/guards";
 import { notify } from "@/lib/notify";
@@ -30,6 +30,8 @@ export async function POST(
     .select({
       fromUserId: schema.proposals.fromUserId,
       toUserId: schema.proposals.toUserId,
+      type: schema.proposals.type,
+      cardId: schema.proposals.cardId,
     })
     .from(schema.proposals)
     .where(eq(schema.proposals.id, id))
@@ -44,13 +46,18 @@ export async function POST(
     return NextResponse.redirect(thread, { status: 303 });
   }
 
+  // Is this the first message in the thread? (Determines the notification text.)
+  const [{ n: priorMessages }] = await db
+    .select({ n: count() })
+    .from(schema.messages)
+    .where(eq(schema.messages.proposalId, id));
+
   await db.insert(schema.messages).values({
     proposalId: id,
     fromUserId: me,
     body: body.slice(0, 1000),
   });
 
-  // Notify the other participant of the new message.
   const otherId =
     proposal.fromUserId === me ? proposal.toUserId : proposal.fromUserId;
   const [sender] = await db
@@ -58,9 +65,23 @@ export async function POST(
     .from(schema.users)
     .where(eq(schema.users.id, me))
     .limit(1);
+  const senderName = sender?.username ?? "A neighbor";
+
+  // The asker's first message is the owner's first heads-up about the request,
+  // so name the card. Everything after is a plain new-message ping.
+  let notifyBody = `New message from ${senderName}.`;
+  if (priorMessages === 0 && me === proposal.fromUserId) {
+    const [card] = await db
+      .select({ title: schema.cards.title })
+      .from(schema.cards)
+      .where(eq(schema.cards.id, proposal.cardId))
+      .limit(1);
+    notifyBody = `${senderName} wants to ${proposal.type} ${card?.title ?? "a card"}.`;
+  }
+
   await notify(otherId, {
     kind: "message",
-    body: `New message from ${sender?.username ?? "a neighbor"}.`,
+    body: notifyBody,
     url: `/proposals/${id}`,
   });
 
