@@ -129,9 +129,17 @@ export default async function Thread({
       )}
 
       {pending && !iAmOwner && (
-        <p className="status status-pending">
-          Waiting for {other?.username ?? "them"} to accept.
-        </p>
+        <div className="proposal">
+          <p className="status status-pending">
+            Waiting for {other?.username ?? "them"} to accept.
+          </p>
+          <form method="post" action="/proposals/withdraw">
+            <input type="hidden" name="proposalId" value={proposal.id} />
+            <button type="submit" className="toggle revoke">
+              Withdraw request
+            </button>
+          </form>
+        </div>
       )}
 
       <ul className="thread">

@@ -13,7 +13,6 @@ import { NextResponse } from "next/server";
 import { and, eq, inArray } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { requireOnboardedUserId } from "@/lib/guards";
-import { notify } from "@/lib/notify";
 import { TERMS_VERSION } from "@/lib/terms";
 
 export const dynamic = "force-dynamic";
@@ -68,6 +67,9 @@ export async function POST(request: Request) {
     });
   }
 
+  // Create the request quietly and drop the asker into the thread. The owner is
+  // not pinged here — that happens when the asker sends their first message, so
+  // tapping Request and backing out never buzzes anyone.
   const [created] = await db
     .insert(schema.proposals)
     .values({
@@ -78,23 +80,6 @@ export async function POST(request: Request) {
       termsVersionAgreed: TERMS_VERSION,
     })
     .returning({ id: schema.proposals.id });
-
-  // Tell the owner, with a link straight to the thread.
-  const [asker] = await db
-    .select({ username: schema.users.username })
-    .from(schema.users)
-    .where(eq(schema.users.id, me))
-    .limit(1);
-  const [card] = await db
-    .select({ title: schema.cards.title })
-    .from(schema.cards)
-    .where(eq(schema.cards.id, cardId))
-    .limit(1);
-  await notify(toUserId, {
-    kind: "proposal",
-    body: `${asker?.username ?? "A neighbor"} wants to ${type} ${card?.title ?? "a card"}.`,
-    url: `/proposals/${created.id}`,
-  });
 
   return NextResponse.redirect(new URL(`/proposals/${created.id}`, origin), {
     status: 303,
