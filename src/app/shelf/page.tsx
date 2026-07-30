@@ -8,7 +8,7 @@
  * arrives unlisted; sharing is an explicit opt-in.
  */
 
-import { aliasedTable, and, desc, eq, isNull } from "drizzle-orm";
+import { aliasedTable, and, count, desc, eq, isNull } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { requireOnboardedUserId } from "@/lib/guards";
 import { Hero } from "../hero";
@@ -93,6 +93,9 @@ export default async function Shelf({
     (c) => c.visibility === "off_limits"
   ).length;
 
+  // A gentle sense of the group. Just a count, no names.
+  const [{ members }] = await db.select({ members: count() }).from(schema.users);
+
   return (
     <>
       <Hero active="shelf" />
@@ -147,6 +150,10 @@ export default async function Shelf({
             </button>
           </form>
         )}
+        <p className="community-note">
+          🏡 You&apos;re one of {members} famil{members === 1 ? "y" : "ies"}{" "}
+          sharing.
+        </p>
       </header>
 
       <ul className="grid">
