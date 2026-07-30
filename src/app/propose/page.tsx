@@ -164,7 +164,7 @@ export default async function Propose({
         </button>
       </form>
       <p className="fineprint">
-        <a href="/matches">Back to matches</a>
+        <a href="/matches">Back to browse</a>
       </p>
     </main>
   );

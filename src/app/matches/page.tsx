@@ -3,10 +3,10 @@
  * Copyright (C) 2026 Edward McWilliams and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  *
- * Matches: for each card on your wishlist, which neighbors are offering it, plus
- * a browse view of everything on offer grouped by neighbor. Only opt-in offers
- * (lend/trade) appear with a name attached; private and off-limits cards are
- * never shown, so nobody's full library is ever a browsable directory.
+ * Browse: everything neighbors are offering right now, grouped by neighbor.
+ * Only opt-in offers (lend/trade, available) ever appear — private and
+ * off-limits cards are never shown, so nobody's library is a browsable
+ * directory. Request a card straight from here.
  */
 
 import { and, eq, inArray, ne } from "drizzle-orm";
@@ -21,62 +21,9 @@ const OFFER_LABEL: Record<string, string> = {
   trade: "to trade",
 };
 
-export default async function Matches() {
+export default async function Browse() {
   const userId = await requireOnboardedUserId();
 
-  // Every offer, by another member, of a card on my wishlist.
-  const rows = await db
-    .select({
-      cardId: schema.cards.id,
-      title: schema.cards.title,
-      cover: schema.cards.coverImageUrl,
-      ownerId: schema.users.id,
-      username: schema.users.username,
-      visibility: schema.ownership.visibility,
-    })
-    .from(schema.wishlist)
-    .innerJoin(
-      schema.ownership,
-      and(
-        eq(schema.ownership.cardId, schema.wishlist.cardId),
-        ne(schema.ownership.userId, userId),
-        eq(schema.ownership.status, "available"),
-        inArray(schema.ownership.visibility, ["lend", "trade"])
-      )
-    )
-    .innerJoin(schema.cards, eq(schema.cards.id, schema.wishlist.cardId))
-    .innerJoin(schema.users, eq(schema.users.id, schema.ownership.userId))
-    .where(eq(schema.wishlist.userId, userId))
-    .orderBy(schema.cards.title, schema.users.username);
-
-  // Group offers under each wanted card.
-  const byCard = new Map<
-    string,
-    {
-      cardId: string;
-      title: string;
-      cover: string | null;
-      offers: { ownerId: string; username: string; visibility: string }[];
-    }
-  >();
-  for (const r of rows) {
-    const entry = byCard.get(r.cardId) ?? {
-      cardId: r.cardId,
-      title: r.title,
-      cover: r.cover,
-      offers: [],
-    };
-    entry.offers.push({
-      ownerId: r.ownerId,
-      username: r.username ?? "a neighbor",
-      visibility: r.visibility,
-    });
-    byCard.set(r.cardId, entry);
-  }
-  const matches = [...byCard.values()];
-
-  // Everything on offer across the group, grouped by neighbor. Offered cards
-  // only (never private/off-limits), so it's not a full-library directory.
   const offerRows = await db
     .select({
       cardId: schema.cards.id,
@@ -127,62 +74,11 @@ export default async function Matches() {
       <Hero active="matches" />
       <main className="shelf">
       <header className="shelf-head">
-        <h1>Matches</h1>
+        <h1>Browse</h1>
         <p>
-          Cards on your wishlist that a neighbor is offering right now. Reach out
-          to arrange a borrow or swap.
-        </p>
-      </header>
-
-      {matches.length > 0 ? (
-        <ul className="grid">
-          {matches.map((m) => (
-            <li key={m.cardId} className="cell">
-              <div className="art">
-                {m.cover ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={m.cover} alt={m.title} loading="lazy" />
-                ) : (
-                  <div className="art-fallback" aria-hidden="true" />
-                )}
-              </div>
-              <p className="title">{m.title}</p>
-              <ul className="offers">
-                {m.offers.map((o, i) => (
-                  <li key={i}>
-                    <span>
-                      {o.username}{" "}
-                      <span className="offer-type">
-                        {OFFER_LABEL[o.visibility] ?? "offered"}
-                      </span>
-                    </span>
-                    <a
-                      className="request"
-                      href={`/propose?to=${o.ownerId}&card=${m.cardId}&type=${
-                        o.visibility === "trade" ? "swap" : "borrow"
-                      }`}
-                    >
-                      {o.visibility === "trade" ? "Propose swap" : "Request"}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="empty">
-          No matches yet. Add cards to your{" "}
-          <a href="/wishlist">wishlist</a>, and when a neighbor offers one it
-          will show up here.
-        </p>
-      )}
-
-      <header className="shelf-head section">
-        <h2>Browse offers, by neighbor</h2>
-        <p>
-          Everything neighbors are offering right now. Private and off-limits
-          cards never show here.
+          Cards your neighbors are offering right now. Tap Request to start a
+          borrow or swap. Only offered cards show here, never anyone&apos;s
+          private ones.
         </p>
       </header>
 
@@ -222,7 +118,7 @@ export default async function Matches() {
         ))
       ) : (
         <p className="empty">
-          No one&apos;s offering cards yet. When neighbors offer from their
+          No one&apos;s offering cards yet. When neighbors offer cards from their
           shelves, they&apos;ll show up here.
         </p>
       )}

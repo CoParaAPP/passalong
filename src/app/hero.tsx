@@ -10,7 +10,7 @@
 
 import { viewerIsOrganizer } from "@/lib/guards";
 
-type Tab = "shelf" | "wishlist" | "matches" | "proposals" | "report" | "organizer";
+type Tab = "shelf" | "matches" | "proposals" | "report" | "organizer";
 
 export async function Hero({ active }: { active?: Tab }) {
   const isOrganizer = active ? await viewerIsOrganizer() : false;
@@ -26,8 +26,7 @@ export async function Hero({ active }: { active?: Tab }) {
         {active && (
           <nav className="hnav">
             <a className={active === "shelf" ? "on" : ""} href="/shelf">Shelf</a>
-            <a className={active === "wishlist" ? "on" : ""} href="/wishlist">Wishlist</a>
-            <a className={active === "matches" ? "on" : ""} href="/matches">Matches</a>
+            <a className={active === "matches" ? "on" : ""} href="/matches">Browse</a>
             <a className={active === "proposals" ? "on" : ""} href="/proposals">Proposals</a>
             <a className={active === "report" ? "on" : ""} href="/flag">Report</a>
             {isOrganizer && (

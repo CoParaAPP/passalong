@@ -143,8 +143,8 @@ export default async function Proposals() {
       </header>
       {outgoing.length === 0 ? (
         <p className="empty">
-          You haven&apos;t asked for anything yet. Find cards on your{" "}
-          <a href="/matches">matches</a>.
+          You haven&apos;t asked for anything yet.{" "}
+          <a href="/matches">Browse</a> what neighbors are offering.
         </p>
       ) : (
         <ul className="proposals">
