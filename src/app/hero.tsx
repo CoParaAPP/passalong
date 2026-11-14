@@ -32,6 +32,9 @@ export async function Hero({ active }: { active?: Tab }) {
             {isOrganizer && (
               <a className={active === "organizer" ? "on" : ""} href="/organizer">Organizer</a>
             )}
+            <form method="post" action="/auth/logout" className="hnav-signout">
+              <button type="submit">Sign out</button>
+            </form>
           </nav>
         )}
       </div>

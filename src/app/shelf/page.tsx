@@ -19,10 +19,15 @@ export const dynamic = "force-dynamic";
 export default async function Shelf({
   searchParams,
 }: {
-  searchParams: Promise<{ returned?: string; handedback?: string }>;
+  searchParams: Promise<{
+    returned?: string;
+    handedback?: string;
+    synced?: string;
+    syncerror?: string;
+  }>;
 }) {
   const userId = await requireOnboardedUserId();
-  const { returned, handedback } = await searchParams;
+  const { returned, handedback, synced, syncerror } = await searchParams;
 
   // Unread reminders from the scheduled return-reminder job.
   const reminders = await db
@@ -123,37 +128,76 @@ export default async function Shelf({
       )}
       <header className="shelf-head">
         <h1>Your shelf</h1>
-        <p>
-          {owned.length} card{owned.length === 1 ? "" : "s"}
-          {offeredCount > 0 && ` · ${offeredCount} offered`}
-          {unlistedCount > 0 && ` · ${unlistedCount} private`}
-          {offLimitsCount > 0 && ` · ${offLimitsCount} off-limits`}. Offer a card,
-          keep it private, or mark it off-limits so it&apos;s shown but never
-          asked for.
-        </p>
-        {returned && (
+
+        {synced !== undefined && (
           <p className="reminder">
-            Marked returned. When you get {returned} back, tap it into your own
-            Yoto player to restore it to your library.
+            Synced {synced} card{synced === "1" ? "" : "s"} from your Yoto
+            library.
           </p>
         )}
-        {handedback && (
-          <p className="reminder">
-            Marked returned. The owner has been reminded to tap {handedback} back
-            into their player.
+        {syncerror && (
+          <p className="form-error">
+            Couldn&apos;t reach Yoto just now. Try the sync again in a moment.
           </p>
         )}
-        {unlistedCount > 0 && (
-          <form method="post" action="/shelf/offer">
-            <button className="offer-all" type="submit">
-              Offer all {unlistedCount} remaining to the group
-            </button>
-          </form>
+
+        {owned.length === 0 ? (
+          <div className="empty-shelf">
+            <p>
+              No cards here yet. Pull your Yoto library in and your store-bought
+              cards will appear.
+            </p>
+            <form method="post" action="/shelf/sync">
+              <button type="submit" className="offer-all">
+                Sync my Yoto cards
+              </button>
+            </form>
+            <form method="post" action="/auth/logout">
+              <button type="submit" className="linklike">
+                Wrong account? Sign out and reconnect
+              </button>
+            </form>
+          </div>
+        ) : (
+          <>
+            <p>
+              {owned.length} card{owned.length === 1 ? "" : "s"}
+              {offeredCount > 0 && ` · ${offeredCount} offered`}
+              {unlistedCount > 0 && ` · ${unlistedCount} private`}
+              {offLimitsCount > 0 && ` · ${offLimitsCount} off-limits`}. Offer a
+              card, keep it private, or mark it off-limits so it&apos;s shown but
+              never asked for.
+            </p>
+            {returned && (
+              <p className="reminder">
+                Marked returned. When you get {returned} back, tap it into your
+                own Yoto player to restore it to your library.
+              </p>
+            )}
+            {handedback && (
+              <p className="reminder">
+                Marked returned. The owner has been reminded to tap {handedback}{" "}
+                back into their player.
+              </p>
+            )}
+            {unlistedCount > 0 && (
+              <form method="post" action="/shelf/offer">
+                <button className="offer-all" type="submit">
+                  Offer all {unlistedCount} remaining to the group
+                </button>
+              </form>
+            )}
+            <form method="post" action="/shelf/sync">
+              <button type="submit" className="linklike">
+                Re-sync from Yoto (pull newly bought cards)
+              </button>
+            </form>
+            <p className="community-note">
+              🏡 You&apos;re one of {members} famil{members === 1 ? "y" : "ies"}{" "}
+              sharing.
+            </p>
+          </>
         )}
-        <p className="community-note">
-          🏡 You&apos;re one of {members} famil{members === 1 ? "y" : "ies"}{" "}
-          sharing.
-        </p>
       </header>
 
       <ul className="grid">

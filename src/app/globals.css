@@ -123,6 +123,54 @@ a {
   color: var(--on-accent);
 }
 
+.hnav-signout {
+  display: inline;
+}
+
+.hnav-signout button {
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #6f6456;
+  background: transparent;
+  border: none;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--r-pill);
+  cursor: pointer;
+}
+
+.hnav-signout button:hover {
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--accent-ink);
+}
+
+/* Empty shelf: prompt to sync the Yoto library. */
+.empty-shelf {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin: 0.75rem 0 1rem;
+}
+
+.empty-shelf p {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* A button that reads as a text link. */
+.linklike {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--accent-ink);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 /* Landing */
 .landing {
   max-width: 27rem;

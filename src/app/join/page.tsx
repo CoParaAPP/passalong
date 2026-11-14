@@ -44,7 +44,7 @@ export default async function Join({
           required
         />
         <button type="submit" className="primary">
-          Continue to Yoto
+          Continue to Yoto sign-in
         </button>
       </form>
       <p className="fineprint">

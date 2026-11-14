@@ -20,7 +20,7 @@ export default function Home() {
         Join with an invite
       </a>
       <p className="fineprint">
-        Already a member? <a href="/auth/login">Connect your Yoto account</a>.
+        Already joined? <a href="/auth/login">Sign in</a>.
       </p>
       <p className="fineprint">
         Unofficial, and not affiliated with Yoto. Personal Make Your Own
