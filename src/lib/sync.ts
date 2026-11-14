@@ -37,6 +37,11 @@ export function filterCommercialCards(raw: unknown): CommercialCard[] {
   if (!Array.isArray(cards)) return [];
 
   const out: CommercialCard[] = [];
+  // Yoto can list the same card more than once (a card added via several
+  // add-events shows up per event). De-dupe by cardId: a batch of duplicate
+  // primary keys breaks the upsert ("ON CONFLICT DO UPDATE cannot affect row a
+  // second time"), which previously failed the whole sync for those members.
+  const seen = new Set<string>();
   for (const entry of cards as RawEntry[]) {
     const card = entry?.card;
     // The gate: official commercial content only.
@@ -45,6 +50,8 @@ export function filterCommercialCards(raw: unknown): CommercialCard[] {
     const cardId = entry.cardId ?? card.cardId;
     const title = card.title;
     if (!cardId || !title) continue;
+    if (seen.has(cardId)) continue;
+    seen.add(cardId);
 
     const coverImageUrl =
       card.metadata?.cover?.imageL ?? card.content?.cover?.imageL ?? null;

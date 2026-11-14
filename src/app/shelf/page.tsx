@@ -137,7 +137,7 @@ export default async function Shelf({
         )}
         {syncerror && (
           <p className="form-error">
-            Couldn&apos;t reach Yoto just now. Try the sync again in a moment.
+            Couldn&apos;t sync your cards just now. Try again in a moment.
           </p>
         )}
 
