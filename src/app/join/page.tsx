@@ -23,8 +23,9 @@ export default async function Join({
       <main className="onboard">
       <h1>Join the group</h1>
       <p>
-        Passalong is invite-only. Enter the code a neighbor or organizer gave
-        you, then connect your Yoto account.
+        Passalong is invite-only. Enter your invite code, then sign in with the
+        Yoto account you already have — the same one your cards are on. No need
+        to create a new Yoto account.
       </p>
       {error && (
         <p className="form-error">

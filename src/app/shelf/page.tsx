@@ -143,18 +143,20 @@ export default async function Shelf({
 
         {owned.length === 0 ? (
           <div className="empty-shelf">
-            <p>
-              No cards here yet. Pull your Yoto library in and your store-bought
-              cards will appear.
-            </p>
+            <p>No cards on your shelf yet. Tap below to pull in your Yoto library.</p>
             <form method="post" action="/shelf/sync">
               <button type="submit" className="offer-all">
                 Sync my Yoto cards
               </button>
             </form>
+            <p className="fineprint">
+              Still empty after syncing? You may have signed in with a new or
+              empty Yoto account. Use the Yoto account your cards are on — the
+              same one linked to your player — then sign out and reconnect.
+            </p>
             <form method="post" action="/auth/logout">
               <button type="submit" className="linklike">
-                Wrong account? Sign out and reconnect
+                Sign out and reconnect
               </button>
             </form>
           </div>
